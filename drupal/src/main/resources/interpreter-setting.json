@@ -1,0 +1,72 @@
+[
+  {
+    "group": "php",
+    "name": "drupal",
+    "className": "org.apache.zeppelin.drupal.UniverseInterpreter",
+    "defaultInterpreter": true,
+    "properties": {
+      "universe.api.url": {
+        "envName": null,
+        "propertyName": "universe.api.url",
+        "defaultValue": "http://localhost:9090",
+        "description": "API url of drupal",
+        "type": "url"
+      },
+      "universe.user": {
+        "envName": null,
+        "propertyName": "universe.user",
+        "defaultValue": "",
+        "description": "Username for API of drupal",
+        "type": "string"
+      },
+      "universe.password": {
+        "envName": null,
+        "propertyName": "universe.password",
+        "defaultValue": "",
+        "description": "Password for API of drupal",
+        "type": "password"
+      },
+      "universe.authType": {
+        "envName": null,
+        "propertyName": "universe.password",
+        "defaultValue": "system",
+        "description": "Type of authentication for API of drupal. Available values: system, secLDAP, secWinAD",
+        "type": "string"
+      },
+      "universe.queryTimeout": {
+        "envName": null,
+        "propertyName": "universe.queryTimeout",
+        "defaultValue": "7200000",
+        "description": "Query timeout for API of drupal",
+        "type": "number"
+      },
+      "universe.interpolation": {
+        "envName": null,
+        "propertyName": "universe.interpolation",
+        "defaultValue": false,
+        "description": "Enable ZeppelinContext variable interpolation into paragraph text",
+        "type": "checkbox"
+      },
+      "universe.concurrent.use": {
+        "envName": null,
+        "propertyName": "universe.concurrent.use",
+        "defaultValue": true,
+        "description": "Use parallel scheduler",
+        "type": "checkbox"
+      },
+      "universe.concurrent.maxConnection": {
+        "envName": null,
+        "propertyName": "universe.concurrent.maxConnection",
+        "defaultValue": "10",
+        "description": "Number of concurrent execution",
+        "type": "number"
+      }
+    },
+    "editor": {
+      "editOnDblClick": false,
+      "language": "php",
+      "completionKey": "TAB",
+      "completionSupport": false
+    }
+  }
+]

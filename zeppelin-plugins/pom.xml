@@ -40,20 +40,20 @@
     </properties>
 
     <modules>
-        <module>notebookrepo/s3</module>
+        <!-- <module>notebookrepo/s3</module> -->
         <module>notebookrepo/github</module>
-        <module>notebookrepo/azure</module>
+       <!--  <module>notebookrepo/azure</module>
         <module>notebookrepo/gcs</module>
-        <module>notebookrepo/zeppelin-hub</module>
+        <module>notebookrepo/zeppelin-hub</module> -->
         <module>notebookrepo/filesystem</module>
         <module>notebookrepo/mongo</module>
         <module>notebookrepo/oss</module>
 
-        <module>launcher/k8s-standard</module>
-        <module>launcher/cluster</module>
+        <!-- <module>launcher/k8s-standard</module> -->
+        <!-- <module>launcher/cluster</module>
         <module>launcher/docker</module>
         <module>launcher/yarn</module>
-        <module>launcher/flink</module>
+        <module>launcher/flink</module> -->
     </modules>
 
     <dependencies>
@@ -75,13 +75,13 @@
             </exclusions>
         </dependency>
 
-        <dependency>
+       <!--  <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>zeppelin-zengine</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
-        </dependency>
+        </dependency> -->
 
         <!-- Test libraries -->
         <dependency>

@@ -102,7 +102,7 @@
     </dependency>
 
     <!--test libraries-->
-    <dependency>
+    <!-- <dependency>
       <groupId>org.apache.zeppelin</groupId>
       <artifactId>zeppelin-zengine</artifactId>
       <version>${project.version}</version>
@@ -144,7 +144,7 @@
       <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
-
+ -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -36,9 +36,9 @@
   <properties>
     <!--library versions-->
     <interpreter.name>jdbc</interpreter.name>
-    <postgresql.version>9.4-1201-jdbc41</postgresql.version>
+    <postgresql.version>42.2.18</postgresql.version>
     <hadoop.common.version>${hadoop2.7.version}</hadoop.common.version>
-    <h2.version>1.4.190</h2.version>
+    <h2.version>1.4.197</h2.version>
     <commons.dbcp2.version>2.0.1</commons.dbcp2.version>
     <hive2.version>2.3.4</hive2.version>
 
@@ -85,7 +85,7 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
+     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
       <version>${hadoop.common.version}</version>
@@ -161,9 +161,12 @@
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpclient</artifactId>
         </exclusion>
+        <exclusion>
+        	<groupId>jdk.tools</groupId>
+        	<artifactId>jdk.tools</artifactId>
+        </exclusion>
       </exclusions>
-    </dependency>
-
+    </dependency> 
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>

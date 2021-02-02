@@ -84,17 +84,20 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
+   <!--  <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.binary.version}</artifactId>
       <version>${scalatest.version}</version>
       <scope>test</scope>
-    </dependency>
+    </dependency> -->
   </dependencies>
 
   <profiles>
     <profile>
       <id>scala-2.11</id>
+       <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>org.scala-lang.modules</groupId>
@@ -150,7 +153,7 @@
         </executions>
       </plugin>
 
-      <plugin>
+     <!--  <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
         <executions>
@@ -161,7 +164,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
     </plugins>
   </build>
 </project>
