@@ -29,7 +29,7 @@ if /I "%~1"=="-d" (
 if /I "%~1"=="-p" set PORT=%~2
 if /I "%~1"=="-c" set CALLBACK_HOST=%~2
 if /I "%~1"=="-l" set LOCAL_INTERPRETER_REPO=%~2
-if /I "%~1"=="-i" set INTP_GROUP_ID=%~2
+if /I "%~1"=="-i" set INTP_GROUP_ID=%~2 REM intp group
 if /I "%~1"=="-r" set INTP_PORT=%~2
 shift
 goto loop
