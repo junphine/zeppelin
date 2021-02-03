@@ -71,18 +71,21 @@
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-library</artifactId>
       <version>${ignite.scala.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-compiler</artifactId>
       <version>${ignite.scala.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-reflect</artifactId>
       <version>${ignite.scala.version}</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>

@@ -18,6 +18,20 @@
         "description": "Complete URL of the endpoint. Default: http://dbpedia.org/sparql",
         "type": "string"
       },
+      "sparql.user": {
+        "envName": null,
+        "propertyName": "sparql.user",
+        "defaultValue": "",
+        "description": "The sparql endpoint user name",
+        "type": "string"
+      },
+      "sparql.password": {
+        "envName": null,
+        "propertyName": "sparql.password",
+        "defaultValue": "",
+        "description": "The sparql endpoint user password",
+        "type": "password"
+      },
       "sparql.replaceURIs": {
         "envName": "SPARQL_REPLACE_URI",
         "propertyName": "sparql.replaceURIs",

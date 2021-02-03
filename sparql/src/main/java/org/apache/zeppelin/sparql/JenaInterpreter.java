@@ -18,7 +18,13 @@
 package org.apache.zeppelin.sparql;
 
 import org.apache.http.HttpStatus;
-
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryParseException;
@@ -46,6 +52,8 @@ public class JenaInterpreter implements SparqlEngine {
   private String serviceEndpoint;
   private boolean replaceURIs;
   private boolean removeDatatypes;
+  
+  private HttpClient httpclient;
 
   private QueryExecution queryExecution;
 
@@ -55,12 +63,27 @@ public class JenaInterpreter implements SparqlEngine {
     this.removeDatatypes = removeDatatypes;
   }
 
+  public void login(String user,String password) {
+	  CredentialsProvider credsProvider = new BasicCredentialsProvider();
+	  Credentials credentials = new UsernamePasswordCredentials(user, password);
+	  credsProvider.setCredentials(AuthScope.ANY, credentials);
+	  httpclient = HttpClients.custom()
+	      .setDefaultCredentialsProvider(credsProvider)
+	      .build();
+	  
+  }
+  
   @Override
   public InterpreterResult query(String query) {
     LOGGER.info("SPARQL: Run Query '" + query + "' against " + serviceEndpoint);
 
     try {
-      queryExecution = QueryExecutionFactory.sparqlService(serviceEndpoint, query);
+      if(httpclient!=null) {
+    	queryExecution = QueryExecutionFactory.sparqlService(serviceEndpoint, query, httpclient);
+      }
+      else {
+        queryExecution = QueryExecutionFactory.sparqlService(serviceEndpoint, query);
+      }
       PrefixMapping prefixMapping = queryExecution.getQuery().getPrefixMapping();
 
       // execute query and get Results

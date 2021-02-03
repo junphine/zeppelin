@@ -24,6 +24,9 @@ import org.apache.zeppelin.interpreter.InterpreterResult;
  * Interpreter for SPARQL-Query via Apache Jena ARQ.
  */
 public interface SparqlEngine {
+
+  void login(String user,String password);
+
   InterpreterResult query(String query);
 
   void cancel();

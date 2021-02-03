@@ -39,6 +39,8 @@ public class SparqlInterpreter extends Interpreter {
   public static final String SPARQL_SERVICE_ENDPOINT = "sparql.endpoint";
   public static final String SPARQL_REPLACE_URIS = "sparql.replaceURIs";
   public static final String SPARQL_REMOVE_DATATYPES = "sparql.removeDatatypes";
+  public static final String SPARQL_USER = "sparql.user";
+  public static final String SPARQL_PASSWORD = "sparql.password";
 
   public static final String ENGINE_TYPE_JENA = "jena";
 
@@ -71,9 +73,14 @@ public class SparqlInterpreter extends Interpreter {
         && getProperty(SPARQL_REMOVE_DATATYPES).equals("true");
     String engineType = getProperty(SPARQL_ENGINE_TYPE);
 
+    String user = getProperty(SPARQL_USER);
+    String pwd = getProperty(SPARQL_PASSWORD);
     if (SparqlEngineType.JENA.toString().equals(engineType)) {
-      engine = new JenaInterpreter(serviceEndpoint, replaceURIs, removeDatatypes);
+      engine = new JenaInterpreter(serviceEndpoint, replaceURIs, removeDatatypes);      
     } 
+    if(user!=null && !user.isEmpty() && pwd!=null) {
+  	  engine.login(user, pwd); 
+    }
   }
 
   @Override
