@@ -152,9 +152,11 @@ public class RemoteInterpreter extends Interpreter {
     synchronized (this) {
       if (!isCreated) {
         this.interpreterProcess = getOrCreateInterpreterProcess();
-        if (!interpreterProcess.isRunning()) {
-          throw new IOException("Interpreter process is not running\n" +
-                  interpreterProcess.getErrorMessage());
+        if (!interpreterProcess.isRunning()) {        	
+          String msg = interpreterProcess.getErrorMessage();
+          interpreterProcess.stop(); //add@byron
+          interpreterProcess = null; //add@byron
+          throw new IOException("Interpreter process is not running\n" + msg);
         }
         interpreterProcess.callRemoteFunction(client -> {
           LOGGER.info("Create RemoteInterpreter {}", getClassName());

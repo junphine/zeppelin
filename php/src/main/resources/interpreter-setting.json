@@ -1,0 +1,72 @@
+[
+  {
+    "group": "php",
+    "name": "drupal",
+    "className": "org.apache.zeppelin.drupal.UniverseInterpreter",
+    "defaultInterpreter": true,
+    "properties": {
+      "drupal.api.url": {
+        "envName": null,
+        "propertyName": "drupal.api.url",
+        "defaultValue": "http://localhost:9090",
+        "description": "API url of drupal",
+        "type": "url"
+      },
+      "drupal.user": {
+        "envName": null,
+        "propertyName": "drupal.user",
+        "defaultValue": "",
+        "description": "Username for API of drupal",
+        "type": "string"
+      },
+      "drupal.password": {
+        "envName": null,
+        "propertyName": "drupal.password",
+        "defaultValue": "",
+        "description": "Password for API of drupal",
+        "type": "password"
+      },
+      "drupal.authType": {
+        "envName": null,
+        "propertyName": "drupal.password",
+        "defaultValue": "system",
+        "description": "Type of authentication for API of drupal. Available values: system, secLDAP, secWinAD",
+        "type": "string"
+      },
+      "drupal.queryTimeout": {
+        "envName": null,
+        "propertyName": "drupal.queryTimeout",
+        "defaultValue": "7200000",
+        "description": "Query timeout for API of drupal",
+        "type": "number"
+      },
+      "drupal.interpolation": {
+        "envName": null,
+        "propertyName": "drupal.interpolation",
+        "defaultValue": false,
+        "description": "Enable ZeppelinContext variable interpolation into paragraph text",
+        "type": "checkbox"
+      },
+      "drupal.concurrent.use": {
+        "envName": null,
+        "propertyName": "drupal.concurrent.use",
+        "defaultValue": true,
+        "description": "Use parallel scheduler",
+        "type": "checkbox"
+      },
+      "drupal.concurrent.maxConnection": {
+        "envName": null,
+        "propertyName": "drupal.concurrent.maxConnection",
+        "defaultValue": "10",
+        "description": "Number of concurrent execution",
+        "type": "number"
+      }
+    },
+    "editor": {
+      "language": "php",
+      "editOnDblClick": false,
+      "completionKey": "TAB",
+      "completionSupport": false
+    }
+  }
+]

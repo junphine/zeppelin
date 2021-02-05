@@ -82,7 +82,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <skip>${web.e2e.enabled}</skip>
+              <skip>true</skip>
               <arguments>install --no-lockfile</arguments>
             </configuration>
           </execution>
@@ -93,7 +93,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <skip>${web.e2e.enabled}</skip>
+              <skip>true</skip>
               <arguments>run build</arguments>
             </configuration>
           </execution>

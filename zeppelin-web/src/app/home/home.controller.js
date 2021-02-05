@@ -31,7 +31,7 @@ function HomeCtrl($scope, noteListFactory, websocketMsgSrv, $rootScope, arrayOrd
   if ($rootScope.ticket !== undefined) {
     vm.staticHome = false;
   } else {
-    vm.staticHome = true;
+    vm.staticHome = !true; // modify@byron to false
   }
 
   $scope.isReloading = false;
