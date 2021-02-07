@@ -196,7 +196,7 @@ public class UniverseClient {
   
   public String createEvalQuery(String token, UniverseQuery query) throws UniverseException {
 	    try {
-	      HttpPost httpPost = new HttpPost(String.format("%s%s", apiUrl, "/drupal.php?sessid=",token));
+	      HttpPost httpPost = new HttpPost(String.format("%s%s%s", apiUrl, "/drupal.php?sessid=",token));
 	      httpPost.addHeader(TOKEN_HEADER, token);
 	      
 	      httpPost.setEntity(new StringEntity(query.getScript(), "UTF-8"));
