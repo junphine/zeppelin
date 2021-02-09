@@ -27,6 +27,9 @@ function ResizableDirective() {
   let addEvent = function(config) {
     let removeEventByID = function(id) {
       let events = jQuery._data(config.element, 'events')[config.eventType];
+      if (!events) { //add@byron
+          return;
+      }
       for (let i=0; i < events.length; i++) {
         if (events[i].data && events[i].data.eventID === id) {
           events.splice(i, 1);

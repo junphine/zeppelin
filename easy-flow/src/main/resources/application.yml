@@ -1,0 +1,15 @@
+server:
+  port: 28080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/drupal_his_db
+    username: junphine
+    password: 332584185
+    driver-class-name: org.postgresql.Driver
+
+#mybatis
+mybatis-plus:
+  # mybatis xml配置文件扫描
+  mapper-locations: classpath*:mapper/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.xioaka.easy.flow.sdk;

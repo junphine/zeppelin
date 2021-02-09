@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
 public class UniverseClient {
 
   private static Logger logger = LoggerFactory.getLogger(UniverseClient.class);
-  private static final String TOKEN_HEADER = "X-Drupal-LogonToken";
+  private static final String TOKEN_HEADER = "Authorization";
   private static final String EL_FOLDER = "folder";
   private static final String EL_ITEM = "item";
   private static final String EL_NAME = "name";
@@ -550,7 +550,7 @@ public class UniverseClient {
   private void setHeaders(HttpRequestBase request, String token) {
     request.setHeaders(commonHeaders);
     if (StringUtils.isNotBlank(token)) {
-      request.addHeader(TOKEN_HEADER, token);
+      request.addHeader(TOKEN_HEADER, "AccessToken "+token);
     }
   }
 
