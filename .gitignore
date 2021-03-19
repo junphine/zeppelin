@@ -129,3 +129,5 @@ tramp
 
 # Git properties
 **/git.properties
+
+/nextflow/.nextflow
