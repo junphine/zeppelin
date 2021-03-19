@@ -13,8 +13,10 @@
       }
     },
     "editor": {
+      "language":"java",
       "editOnDblClick": false,
-      "completionSupport": false
+      "completionSupport": true,
+      "completionKey": "TAB"
     }
   }
 ]

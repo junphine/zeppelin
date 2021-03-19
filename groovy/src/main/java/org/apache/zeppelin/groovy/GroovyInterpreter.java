@@ -23,11 +23,15 @@ import org.codehaus.groovy.runtime.StackTraceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -38,11 +42,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
+import org.apache.zeppelin.interpreter.InterpreterException;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
 import org.apache.zeppelin.interpreter.thrift.InterpreterCompletion;
+
 import org.apache.zeppelin.scheduler.Job;
 import org.apache.zeppelin.scheduler.Scheduler;
 import org.apache.zeppelin.scheduler.SchedulerFactory;
@@ -58,6 +65,8 @@ public class GroovyInterpreter extends Interpreter {
   //cache for groovy compiled scripts
   Map<String, Class<Script>> scriptCache = Collections
       .synchronizedMap(new WeakHashMap<String, Class<Script>>(100));
+  
+  GroovyCompleter groovyCompleter;
 
   public GroovyInterpreter(Properties property) {
     super(property);
@@ -87,6 +96,8 @@ public class GroovyInterpreter extends Interpreter {
       }
       shell.getClassLoader().addClasspath(classes);
     }
+    
+    groovyCompleter = new GroovyCompleter(shell,2000);
   }
 
   @Override
@@ -113,12 +124,18 @@ public class GroovyInterpreter extends Interpreter {
   private Job getRunningJob(String paragraphId) {
     return getScheduler().getJob(paragraphId);
   }
+ 
 
   @Override
   public List<InterpreterCompletion> completion(String buf, int cursor,
-                                                InterpreterContext interpreterContext) {
-    return null;
+                                                InterpreterContext interpreterContext)
+      throws InterpreterException {
+    
+    List<InterpreterCompletion> results = new LinkedList<>();
+    groovyCompleter.completion(buf, cursor, results);
+    return results;
   }
+
 
   @SuppressWarnings("unchecked")
   Script getGroovyScript(String id, String scriptText) /*throws SQLException*/ {
@@ -153,8 +170,7 @@ public class GroovyInterpreter extends Interpreter {
     try {
       Script script = getGroovyScript(contextInterpreter.getParagraphId(), cmd);
       Job runningJob = getRunningJob(contextInterpreter.getParagraphId());
-      runningJob.info()
-          .put("CURRENT_THREAD", Thread.currentThread()); //to be able to terminate thread
+      runningJob.info().put("CURRENT_THREAD", Thread.currentThread()); //to be able to terminate thread
       Map<String, Object> bindings = script.getBinding().getVariables();
       bindings.clear();
       StringWriter out = new StringWriter((int) (cmd.length() * 1.75));

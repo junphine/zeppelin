@@ -1,0 +1,92 @@
+[
+  {
+    "group": "nextflow",
+    "name":  "nextflow",
+    "className": "org.apache.zeppelin.groovy.NextflowInterpreter",
+    "properties": {     
+      "process.executor": {
+        "envName": null,
+        "propertyName": "process.executor",
+        "defaultValue": "local",
+        "description": "In the Nextflow framework architecture, the executor is the component that determines the system where a pipeline process is run and supervises its execution.",
+        "type": "string"
+      },      
+      "profile": {
+        "envName": null,
+        "propertyName": "profile",
+        "defaultValue": "",
+        "description": "A profile is a set of configuration attributes that can be activated/chosen when launching a pipeline execution by using the -profile command line option.",
+        "type": "string"
+      },
+      "options": {
+        "envName": null,
+        "propertyName": "options",
+        "defaultValue": "",
+        "description": "A options is a set of configuration attributes that can be activated/chosen when launching a pipeline execution by using the nextflow command line option.",
+        "type": "string"
+      }
+    },
+    "editor": {
+      "language":"java",
+      "editOnDblClick": false,
+      "completionSupport": true,
+      "completionKey": "TAB"
+    }
+  },
+  
+  {
+    "group": "nextflow",
+    "name": "shell",
+    "className": "org.apache.zeppelin.groovy.NextflowShellInterpreter",
+    "defaultInterpreter": false,
+    "properties": {
+      "shell.command.timeout.millisecs": {
+        "envName": "SHELL_COMMAND_TIMEOUT",
+        "propertyName": "shell.command.timeout.millisecs",
+        "defaultValue": "60000",
+        "description": "Shell command time out in millisecs. Default = 60000",
+        "type": "number"
+      },
+      "shell.working.directory.user.home": {
+        "envName": "SHELL_WORKING_DIRECTORY_USER_HOME",
+        "propertyName": "shell.working.directory.user.home",
+        "defaultValue": false,
+        "description": "If this set to true, the shell's working directory will be set to user home",
+        "type": "checkbox"
+      },
+      "zeppelin.shell.auth.type": {
+        "envName": null,
+        "propertyName": "zeppelin.shell.auth.type",
+        "defaultValue": "",
+        "description": "If auth type is needed, Example: KERBEROS",
+        "type": "string"
+      },
+      "zeppelin.shell.keytab.location": {
+        "envName": null,
+        "propertyName": "zeppelin.shell.keytab.location",
+        "defaultValue": "",
+        "description": "Kerberos keytab location",
+        "type": "string"
+      },
+      "zeppelin.shell.principal": {
+        "envName": null,
+        "propertyName": "zeppelin.shell.principal",
+        "defaultValue": "",
+        "description": "Kerberos principal",
+        "type": "string"
+      },
+      "zeppelin.shell.interpolation": {
+        "envName": null,
+        "propertyName": "zeppelin.shell.interpolation",
+        "defaultValue": false,
+        "description": "Enable ZeppelinContext variable interpolation into paragraph text",
+        "type": "checkbox"
+      }
+    },
+    "editor": {
+      "language": "sh",
+      "editOnDblClick": false,
+      "completionSupport": false
+    }
+  }
+]

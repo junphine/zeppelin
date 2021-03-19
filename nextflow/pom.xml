@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  >
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>zeppelin-interpreter-parent</artifactId>
+    <groupId>org.apache.zeppelin</groupId>
+    <version>0.10.0-SNAPSHOT</version>
+    <relativePath>../zeppelin-interpreter-parent/pom.xml</relativePath>
+  </parent>
+  
+  <artifactId>zeppelin-nextflow</artifactId>
+  <packaging>jar</packaging>  
+  <name>Zeppelin: Nextflow interpreter</name>
+
+  <properties>
+    <interpreter.name>nextflow</interpreter.name>
+  </properties>
+
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all -->
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy</artifactId>
+        <version>3.0.7</version>
+        <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-sql</artifactId>
+        <version>3.0.7</version>
+       <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-xml</artifactId>
+        <version>3.0.7</version>
+       <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-json</artifactId>
+        <version>3.0.7</version>
+       <scope>provided</scope>
+    </dependency>    
+    
+    <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-templates</artifactId>
+        <version>3.0.7</version>
+        <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>io.nextflow</groupId>
+        <artifactId>nextflow</artifactId>
+        <version>21.03.8-SNAPSHOT</version>
+       <scope>provided</scope>
+    </dependency>     
+    
+    <dependency>
+        <groupId>io.nextflow</groupId>
+        <artifactId>nf-ignite</artifactId>
+        <version>1.2.1</version>
+        <scope>provided</scope>
+    </dependency>
+    
+     
+    <dependency>
+        <groupId>io.nextflow</groupId>
+        <artifactId>nf-tower</artifactId>
+        <version>1.0.1</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-exec</artifactId>      
+    </dependency>
+    
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

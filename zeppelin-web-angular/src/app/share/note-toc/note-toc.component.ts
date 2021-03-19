@@ -17,6 +17,7 @@ interface TocResult {
   paragraphId: string;
   resultData: string;
   resultType: DatasetType;
+  paragraphTitle: string;
 }
 
 interface TocRow {
@@ -49,7 +50,8 @@ export class NoteTocComponent implements OnInit, DoCheck {
           newResults.push({
             paragraphId: paragraph.id,
             resultData: result.data,
-            resultType: result.type
+            resultType: result.type,
+            paragraphTitle: paragraph.config.title? paragraph.title:null
           })
         );
       }
@@ -74,6 +76,13 @@ export class NoteTocComponent implements OnInit, DoCheck {
         title: this.unpackNodes(heading),
         paragraphId: result.paragraphId
       }));
+      if(result.paragraphTitle){
+        newRows.unshift({
+	        level: 2,
+	        title: result.paragraphTitle,
+	        paragraphId: result.paragraphId
+	    });
+      }
       return [...allRows, ...newRows];
     }, []);
     const levelsSet: Set<number> = new Set();

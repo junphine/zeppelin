@@ -33,7 +33,10 @@
         <a [routerLink]="['/jobmanager']">Job</a>
       </li>
       <li nz-menu-item routerLinkActive="ant-menu-item-selected">
-        <a [routerLink]="['/public']">Public</a>
+        <a [routerLink]="['/notebook/dashboard']">Dashboard</a>
+      </li>
+      <li nz-menu-item routerLinkActive="ant-menu-item-selected">
+        <a href="/tower-web" target="_blank">Nextflow</a>
       </li>
     </ul>
   </div>
@@ -59,9 +62,9 @@
             [routerLink]="['/credential']">Credential
           </a>
         </li>
-<!--        <li nz-menu-item routerLinkActive="ant-dropdown-menu-item-selected">-->
-<!--          <a [routerLink]="['/helium']">Helium</a>-->
-<!--        </li>-->
+        <li nz-menu-item routerLinkActive="ant-dropdown-menu-item-selected">
+          <a [routerLink]="['/helium']">Helium</a>
+        </li>
         <li nz-menu-item routerLinkActive="ant-dropdown-menu-item-selected">
           <a [routerLink]="['/configuration']">Configuration</a>
         </li>

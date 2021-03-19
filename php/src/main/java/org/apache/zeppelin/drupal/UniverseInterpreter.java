@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,6 +43,8 @@ import java.util.concurrent.TimeUnit;
 public class UniverseInterpreter extends AbstractInterpreter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UniverseInterpreter.class);
+  
+  ExecutorService executorService = Executors.newFixedThreadPool(1);
 
   public UniverseInterpreter(Properties properties) {
     super(properties);
@@ -78,6 +81,7 @@ public class UniverseInterpreter extends AbstractInterpreter {
   public void close() throws InterpreterException {
     try {
       client.close();
+      executorService.shutdown();
     } catch (Exception e) {
       throw new InterpreterException(e.getCause());
     }
@@ -240,25 +244,20 @@ public class UniverseInterpreter extends AbstractInterpreter {
     }
     try {
       final String token = client.getToken(interpreterContext.getParagraphId());
-      ExecutorService executorService = Executors.newFixedThreadPool(1);
-      executorService.execute(new Runnable() {
+      
+      Future<?> f = executorService.submit(new Runnable() {
         @Override
         public void run() {
           completer.createOrUpdate(client, token, buf, cursor);
         }
       });
 
-      executorService.shutdown();
-
-      executorService.awaitTermination(10, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
+      f.get(10, TimeUnit.SECONDS);
+      
+    } catch (Exception e) {
       LOGGER.warn("Completion timeout", e);
     } finally {
-      try {
-        client.closeSession(interpreterContext.getParagraphId());
-      } catch (Exception e) {
-        LOGGER.error("Error close SAP session", e );
-      }
+     
     }
     return completer;
   }

@@ -53,6 +53,8 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
     this.bindings = bindings;
     this.z = new GroovyZeppelinContext(null, 1000);
     this.z.setInterpreterContext(this.interpreterContext);
+    //add@byron
+    this.z.setGui(ctx.getGui());
   }
 
   public Object getProperty(String key) {

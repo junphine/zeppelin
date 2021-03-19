@@ -164,6 +164,12 @@
               <exclude>org.apache.zeppelin:zeppelin-interpreter-shaded</exclude>
             </excludes>
           </artifactSet>
+          <relocations>
+            <relocation>
+              <pattern>com.google</pattern>
+              <shadedPattern>org.apache.zeppelin.jupyter.com.google</shadedPattern>
+            </relocation>
+          </relocations>
           <outputFile>${project.build.directory}/../../interpreter/python/${interpreter.jar.name}-${project.version}.jar</outputFile>
         </configuration>
         <executions>
