@@ -58,15 +58,14 @@ import org.apache.zeppelin.scheduler.SchedulerFactory;
  * Groovy interpreter for Zeppelin.
  */
 public class GroovyInterpreter extends Interpreter {
-  Logger log = LoggerFactory.getLogger(GroovyInterpreter.class);
-  GroovyShell shell = null; //new GroovyShell();
+  protected Logger log = LoggerFactory.getLogger(GroovyInterpreter.class);
+  protected GroovyShell shell = null; //new GroovyShell();
   //here we will store Interpreters shared variables. concurrent just in case.
-  Map<String, Object> sharedBindings = new ConcurrentHashMap<String, Object>();
+  protected Map<String, Object> sharedBindings = new ConcurrentHashMap<String, Object>();
   //cache for groovy compiled scripts
-  Map<String, Class<Script>> scriptCache = Collections
-      .synchronizedMap(new WeakHashMap<String, Class<Script>>(100));
+  Map<String, Class<Script>> scriptCache = Collections.synchronizedMap(new WeakHashMap<String, Class<Script>>(100));
   
-  GroovyCompleter groovyCompleter;
+  protected GroovyCompleter groovyCompleter;
 
   public GroovyInterpreter(Properties property) {
     super(property);

@@ -148,3 +148,11 @@
 2021-03-19 22:09:27	1.4s	Nextflow演示案例-第一个_测试_0319T220927	OK	b87f1e49c4d2c585503341eb6ef83f1f	dc6f771c-e3d2-4d0d-b694-bd7426f5bf75	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
 2021-03-19 22:09:33	1.5s	Nextflow演示案例-第一个_测试_0319T220933	OK	b87f1e49c4d2c585503341eb6ef83f1f	6d4df1d0-3a22-492b-9b4b-dd7732ca1205	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
 2021-03-19 22:12:27	1.3s	Nextflow演示案例-测试案例_0319T221227	OK	0221ea95ffe85ae293dd4e0c8e8a3f8a	aff56e94-c38a-4d86-9649-658ddcaffe20	nextflow run '\tmp\测试案例.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 15:45:24	4s	Nextflow演示案例-第一个_测试_0320T154521	OK	b87f1e49c4d2c585503341eb6ef83f1f	d0f56666-9663-4fcc-ba3c-2c12061f3ed8	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 15:45:38	1.3s	Nextflow演示案例-第一个_测试_0320T154538	OK	b87f1e49c4d2c585503341eb6ef83f1f	6fe1f7ee-333f-4c20-9c0f-f73e7c32c612	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 18:03:07	-	Nextflow演示案例-第一个_测试_0320T180304	-	b87f1e49c4d2c585503341eb6ef83f1f	7883d2f3-b2a8-4157-a990-afb569fa7dc1	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 18:04:06	28.8s	Nextflow演示案例-第一个_测试_0320T180404	OK	b87f1e49c4d2c585503341eb6ef83f1f	f29ce523-c2e0-4f94-bef5-ae48098bad28	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 18:06:37	21.7s	Nextflow演示案例-第一个_测试_0320T180633	OK	b87f1e49c4d2c585503341eb6ef83f1f	5e61b14c-fb78-4c36-a52f-f72bb8bdeb17	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 18:08:01	-	Nextflow演示案例-第一个_测试_0320T180728	-	b87f1e49c4d2c585503341eb6ef83f1f	70a1c05d-a660-43f8-b241-e5e9292250ed	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 18:10:40	4s	Nextflow演示案例-测试案例_0320T181039	OK	0221ea95ffe85ae293dd4e0c8e8a3f8a	79a14d37-0276-45c3-a512-d12b29f0cdab	nextflow run '\tmp\测试案例.nf' -lib ../interpreter/nextflow  -dsl2
+2021-03-20 18:12:18	-	Nextflow演示案例-第一个_测试_0320T181210	-	b87f1e49c4d2c585503341eb6ef83f1f	b6ff0f3f-4e99-4f4d-add3-9aa2b0aadcd9	nextflow run '\tmp\第一个_测试.nf' -lib ../interpreter/nextflow  -dsl2

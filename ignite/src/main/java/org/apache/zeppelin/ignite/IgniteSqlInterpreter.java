@@ -53,7 +53,7 @@ import org.apache.zeppelin.scheduler.SchedulerFactory;
  * </ul>
  */
 public class IgniteSqlInterpreter extends Interpreter {
-  private static final String IGNITE_JDBC_DRIVER_NAME = "org.apache.ignite.IgniteJdbcDriver";
+  static final String IGNITE_JDBC_DRIVER_NAME = "org.apache.ignite.IgniteJdbcDriver";
 
   static final String IGNITE_JDBC_URL = "ignite.jdbc.url";
 
@@ -70,6 +70,9 @@ public class IgniteSqlInterpreter extends Interpreter {
   @Override
   public void open() {
     try {
+     // Register JDBC driver.
+      Class.forName("org.apache.ignite.IgniteJdbcThinDriver");
+     // Register JDBC Client driver.
       Class.forName(IGNITE_JDBC_DRIVER_NAME);
     } catch (ClassNotFoundException e) {
       logger.error("Can't find Ignite JDBC driver", e);
@@ -93,7 +96,7 @@ public class IgniteSqlInterpreter extends Interpreter {
     try {
       if (conn != null) {
         conn.close();
-      }
+      }      
     } catch (SQLException e) {
       throw new InterpreterException(e);
     } finally {

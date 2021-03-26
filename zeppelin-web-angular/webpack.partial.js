@@ -20,7 +20,7 @@ module.exports = {
         'less', 'lua', 'markdown', 'mysql', 'objective', 'perl', 'pgsql', 'php', 'powershell', 'python', 'r', 'ruby',
         'rust', 'scheme', 'scss', 'shell', 'sql', 'swift', 'typescript', 'vb', 'xml', 'yaml'
       ],
-      features: ['!accessibilityHelp']
+      features: ['!accessibilityHelp','!gotoSymbol']
     })
   ]
 };

@@ -24,9 +24,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -36,20 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import scala.Console;
-import scala.Some;
-import scala.collection.JavaConversions;
-import scala.tools.nsc.Settings;
-import scala.tools.nsc.interpreter.IMain;
-import scala.tools.nsc.interpreter.Results.Result;
-import scala.tools.nsc.settings.MutableSettings.BooleanSetting;
-import scala.tools.nsc.settings.MutableSettings.PathSetting;
-
-import org.apache.zeppelin.interpreter.Interpreter;
+import org.apache.zeppelin.groovy.GroovyInterpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
-import org.apache.zeppelin.interpreter.InterpreterUtils;
 import org.apache.zeppelin.interpreter.thrift.InterpreterCompletion;
 import org.apache.zeppelin.scheduler.Scheduler;
 import org.apache.zeppelin.scheduler.SchedulerFactory;
@@ -60,288 +48,207 @@ import org.apache.zeppelin.scheduler.SchedulerFactory;
  * Use the following properties for interpreter configuration:
  *
  * <ul>
- *     <li>{@code ignite.addresses} - coma separated list of hosts in form {@code <host>:<port>}
- *     or {@code <host>:<port_1>..<port_n>} </li>
- *     <li>{@code ignite.clientMode} - indicates that Ignite interpreter
- *     should start node in client mode ({@code true} or {@code false}).</li>
- *     <li>{@code ignite.peerClassLoadingEnabled} - enables/disables peer class loading
- *     ({@code true} or {@code false}).</li>
- *     <li>{@code ignite.config.url} - URL for Ignite configuration. If this URL specified then
- *     all aforementioned properties will not be taken in account.</li>
+ * <li>{@code ignite.addresses} - coma separated list of hosts in form
+ * {@code <host>:<port>} or {@code <host>:<port_1>..<port_n>}</li>
+ * <li>{@code ignite.clientMode} - indicates that Ignite interpreter should
+ * start node in client mode ({@code true} or {@code false}).</li>
+ * <li>{@code ignite.peerClassLoadingEnabled} - enables/disables peer class
+ * loading ({@code true} or {@code false}).</li>
+ * <li>{@code ignite.config.url} - URL for Ignite configuration. If this URL
+ * specified then all aforementioned properties will not be taken in
+ * account.</li>
  * </ul>
  */
-public class IgniteInterpreter extends Interpreter {
-  static final String IGNITE_ADDRESSES = "ignite.addresses";
+public class IgniteInterpreter extends GroovyInterpreter {
+	static final String IGNITE_ADDRESSES = "ignite.addresses";
 
-  static final String IGNITE_CLIENT_MODE = "ignite.clientMode";
+	static final String IGNITE_CLIENT_MODE = "ignite.clientMode";
 
-  static final String IGNITE_PEER_CLASS_LOADING_ENABLED = "ignite.peerClassLoadingEnabled";
+	static final String IGNITE_PEER_CLASS_LOADING_ENABLED = "ignite.peerClassLoadingEnabled";
 
-  static final String IGNITE_CFG_URL = "ignite.config.url";
+	static final String IGNITE_CFG_URL = "ignite.config.url";
 
-  private Logger logger = LoggerFactory.getLogger(IgniteInterpreter.class);
-  private Ignite ignite;
-  private ByteArrayOutputStream out;
-  private IMain imain;
-  private Throwable initEx;
+	private Logger logger = LoggerFactory.getLogger(IgniteInterpreter.class);
+	private Ignite ignite;
 
-  public IgniteInterpreter(Properties property) {
-    super(property);
-  }
+	private Throwable initEx;
 
-  @Override
-  public void open() {
-    Settings settings = new Settings();
+	public IgniteInterpreter(Properties property) {
+		super(property);
+	}
 
-    URL[] urls = getClassloaderUrls();
+	@Override
+	public void open() {
+		super.open();
 
-    // set classpath
-    PathSetting pathSettings = settings.classpath();
-    StringBuilder sb = new StringBuilder();
+		URL[] urls = getClassloaderUrls();
 
-    for (File f : currentClassPath()) {
-      if (sb.length() > 0) {
-        sb.append(File.pathSeparator);
-      }
-      sb.append(f.getAbsolutePath());
-    }
+		// set classpath
 
-    if (urls != null) {
-      for (URL u : urls) {
-        if (sb.length() > 0) {
-          sb.append(File.pathSeparator);
-        }
-        sb.append(u.getFile());
-      }
-    }
+		StringBuilder sb = new StringBuilder();
 
-    pathSettings.v_$eq(sb.toString());
-    settings.scala$tools$nsc$settings$ScalaSettings$_setter_$classpath_$eq(pathSettings);
+		for (File f : currentClassPath()) {
+			if (sb.length() > 0) {
+				sb.append(File.pathSeparator);
+			}
+			sb.append(f.getAbsolutePath());
+		}
 
-    settings.explicitParentLoader_$eq(new Some<>(Thread.currentThread().getContextClassLoader()));
+		if (urls != null) {
+			for (URL u : urls) {
+				if (sb.length() > 0) {
+					sb.append(File.pathSeparator);
+				}
+				sb.append(u.getFile());
+			}
+		}
 
-    BooleanSetting b = (BooleanSetting) settings.usejavacp();
-    b.v_$eq(true);
-    settings.scala$tools$nsc$settings$StandardScalaSettings$_setter_$usejavacp_$eq(b);
+		initIgnite();
+	}
 
-    out = new ByteArrayOutputStream();
-    imain = new IMain(settings, new PrintWriter(out));
+	private List<File> currentClassPath() {
+		List<File> paths = classPath(Thread.currentThread().getContextClassLoader());
+		String[] cps = System.getProperty("java.class.path").split(File.pathSeparator);
 
-    initIgnite();
-  }
+		for (String cp : cps) {
+			paths.add(new File(cp));
+		}
 
-  private List<File> currentClassPath() {
-    List<File> paths = classPath(Thread.currentThread().getContextClassLoader());
-    String[] cps = System.getProperty("java.class.path").split(File.pathSeparator);
+		return paths;
+	}
 
-    for (String cp : cps) {
-      paths.add(new File(cp));
-    }
+	private List<File> classPath(ClassLoader cl) {
+		List<File> paths = new LinkedList<>();
 
-    return paths;
-  }
+		if (cl == null) {
+			return paths;
+		}
 
-  private List<File> classPath(ClassLoader cl) {
-    List<File> paths = new LinkedList<>();
+		if (cl instanceof URLClassLoader) {
+			URLClassLoader ucl = (URLClassLoader) cl;
+			URL[] urls = ucl.getURLs();
+			if (urls != null) {
+				for (URL url : urls) {
+					paths.add(new File(url.getFile()));
+				}
+			}
+		}
 
-    if (cl == null) {
-      return paths;
-    }
+		return paths;
+	}
 
-    if (cl instanceof URLClassLoader) {
-      URLClassLoader ucl = (URLClassLoader) cl;
-      URL[] urls = ucl.getURLs();
-      if (urls != null) {
-        for (URL url : urls) {
-          paths.add(new File(url.getFile()));
-        }
-      }
-    }
+	private Ignite getIgnite() {
+		if (ignite == null) {
+			try {
+				String cfgUrl = getProperty(IGNITE_CFG_URL);
 
-    return paths;
-  }
+				if (cfgUrl != null && !cfgUrl.isEmpty()) {
+					ignite = Ignition.start(new URL(cfgUrl));
+				} else {
+					IgniteConfiguration conf = new IgniteConfiguration();
 
-  public Object getLastObject() {
-    Object obj = imain.lastRequest().lineRep().call(
-        "$result",
-        JavaConversions.asScalaBuffer(new LinkedList<>()));
-    return obj;
-  }
+					conf.setClientMode(Boolean.parseBoolean(getProperty(IGNITE_CLIENT_MODE)));
 
-  private Ignite getIgnite() {
-    if (ignite == null) {
-      try {
-        String cfgUrl = getProperty(IGNITE_CFG_URL);
+					TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
+					ipFinder.setAddresses(getAddresses());
 
-        if (cfgUrl != null && !cfgUrl.isEmpty()) {
-          ignite = Ignition.start(new URL(cfgUrl));
-        } else {
-          IgniteConfiguration conf = new IgniteConfiguration();
+					TcpDiscoverySpi discoSpi = new TcpDiscoverySpi();
+					discoSpi.setIpFinder(ipFinder);
+					conf.setDiscoverySpi(discoSpi);
 
-          conf.setClientMode(Boolean.parseBoolean(getProperty(IGNITE_CLIENT_MODE)));
+					conf.setPeerClassLoadingEnabled(
+							Boolean.parseBoolean(getProperty(IGNITE_PEER_CLASS_LOADING_ENABLED)));
 
-          TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
-          ipFinder.setAddresses(getAddresses());
+					ignite = Ignition.start(conf);
+				}
 
-          TcpDiscoverySpi discoSpi = new TcpDiscoverySpi();
-          discoSpi.setIpFinder(ipFinder);
-          conf.setDiscoverySpi(discoSpi);
+				initEx = null;
+			} catch (Exception e) {
+				logger.error("Error in IgniteInterpreter while getIgnite: ", e);
+				initEx = e;
+			}
+		}
+		return ignite;
+	}
 
-          conf.setPeerClassLoadingEnabled(
-                  Boolean.parseBoolean(getProperty(IGNITE_PEER_CLASS_LOADING_ENABLED)));
+	private void initIgnite() {
+		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+		try {
 
-          ignite = Ignition.start(conf);
-        }
+			Map<String, Object> binder = super.sharedBindings;
 
-        initEx = null;
-      } catch (Exception e) {
-        logger.error("Error in IgniteInterpreter while getIgnite: " , e);
-        initEx = e;
-      }
-    }
-    return ignite;
-  }
+			if (getIgnite() != null) {
+				binder.put("ignite", ignite);
+			}
+		} finally {
+			Thread.currentThread().setContextClassLoader(contextClassLoader);
+		}
+	}
 
-  private void initIgnite() {
-    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      imain.interpret("@transient var _binder = new java.util.HashMap[String, Object]()");
-      Map<String, Object> binder = (Map<String, Object>) getLastObject();
+	@Override
+	public void close() {
+		initEx = null;
 
-      if (getIgnite() != null) {
-        binder.put("ignite", ignite);
+		if (ignite != null) {
+			ignite.close();
+			ignite = null;
+		}
 
-        imain.interpret("@transient val ignite = "
-            + "_binder.get(\"ignite\")"
-            + ".asInstanceOf[org.apache.ignite.Ignite]");
-      }
-    } finally {
-      Thread.currentThread().setContextClassLoader(contextClassLoader);
-    }
-  }
+		super.close();
+	}
 
-  @Override
-  public void close() {
-    initEx = null;
+	private List<String> getAddresses() {
+		String prop = getProperty(IGNITE_ADDRESSES);
 
-    if (ignite != null) {
-      ignite.close();
-      ignite = null;
-    }
+		if (prop == null || prop.isEmpty()) {
+			return Collections.emptyList();
+		}
 
-    if (imain != null) {
-      imain.close();
-      imain = null;
-    }
-  }
+		String[] tokens = prop.split(",");
+		List<String> addresses = new ArrayList<>(tokens.length);
+		Collections.addAll(addresses, tokens);
 
-  private List<String> getAddresses() {
-    String prop = getProperty(IGNITE_ADDRESSES);
+		return addresses;
+	}
 
-    if (prop == null || prop.isEmpty()) {
-      return Collections.emptyList();
-    }
+	@Override
+	public InterpreterResult interpret(String line, InterpreterContext context) {
+		if (initEx != null) {
+			return IgniteInterpreterUtils.buildErrorResult(initEx);
+		}
 
-    String[] tokens = prop.split(",");
-    List<String> addresses = new ArrayList<>(tokens.length);
-    Collections.addAll(addresses, tokens);
+		if (line == null || line.trim().length() == 0) {
+			return new InterpreterResult(Code.SUCCESS);
+		}
 
-    return addresses;
-  }
+		return super.interpret(line, context);
+	}
 
-  @Override
-  public InterpreterResult interpret(String line, InterpreterContext context) {
-    if (initEx != null) {
-      return IgniteInterpreterUtils.buildErrorResult(initEx);
-    }
+	@Override
+	public void cancel(InterpreterContext context) {
+		super.cancel(context);
+	}
 
-    if (line == null || line.trim().length() == 0) {
-      return new InterpreterResult(Code.SUCCESS);
-    }
+	@Override
+	public FormType getFormType() {
+		return FormType.NATIVE;
+	}
 
-    return interpret(line.split("\n"));
-  }
+	@Override
+	public int getProgress(InterpreterContext context) {
+		return 0;
+	}
 
-  @Override
-  public void cancel(InterpreterContext context) {
-  }
+	@Override
+	public List<InterpreterCompletion> completion(String buf, int cursor, InterpreterContext interpreterContext) {
+		List<InterpreterCompletion> results = new LinkedList<>();
+		groovyCompleter.completion(buf, cursor, results);
+		return results;
+	}
 
-  private InterpreterResult interpret(String[] lines) {
-    String[] linesToRun = new String[lines.length + 1];
-    System.arraycopy(lines, 0, linesToRun, 0, lines.length);
-    linesToRun[lines.length] = "print(\"\")";
-
-    Console.setOut(out);
-    out.reset();
-    Code code = null;
-
-    String incomplete = "";
-    for (int l = 0; l < linesToRun.length; l++) {
-      String s = linesToRun[l];      
-      // check if next line starts with "." (but not ".." or "./") it is treated as an invocation
-      if (l + 1 < linesToRun.length) {
-        String nextLine = linesToRun[l + 1].trim();
-        if (nextLine.startsWith(".") && !nextLine.startsWith("..") && !nextLine.startsWith("./")) {
-          incomplete += s + "\n";
-          continue;
-        }
-      }
-
-      ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-      try {
-        code = getResultCode(imain.interpret(incomplete + s));
-      } catch (Exception e) {
-        logger.info("Interpreter exception", e);
-        return new InterpreterResult(Code.ERROR, InterpreterUtils.getMostRelevantMessage(e));
-      } finally {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);
-      }
-
-      if (code == Code.ERROR) {
-        return new InterpreterResult(code, out.toString());
-      } else if (code == Code.INCOMPLETE) {
-        incomplete += s + '\n';
-      } else {
-        incomplete = "";
-      }
-    }
-
-    if (code == Code.INCOMPLETE) {
-      return new InterpreterResult(code, "Incomplete expression");
-    } else {
-      return new InterpreterResult(code, out.toString());
-    }
-  }
-
-  private Code getResultCode(Result res) {
-    if (res instanceof scala.tools.nsc.interpreter.Results.Success$) {
-      return Code.SUCCESS;
-    } else if (res instanceof scala.tools.nsc.interpreter.Results.Incomplete$) {
-      return Code.INCOMPLETE;
-    } else {
-      return Code.ERROR;
-    }
-  }
-
-  @Override
-  public FormType getFormType() {
-    return FormType.NATIVE;
-  }
-
-  @Override
-  public int getProgress(InterpreterContext context) {
-    return 0;
-  }
-
-  @Override
-  public List<InterpreterCompletion> completion(String buf, int cursor,
-      InterpreterContext interpreterContext) {
-    return new LinkedList<>();
-  }
-
-  @Override
-  public Scheduler getScheduler() {
-    return SchedulerFactory.singleton().createOrGetFIFOScheduler(
-            IgniteInterpreter.class.getName() + this.hashCode());
-  }
+	@Override
+	public Scheduler getScheduler() {
+		return SchedulerFactory.singleton()
+				.createOrGetFIFOScheduler(IgniteInterpreter.class.getName() + this.hashCode());
+	}
 }

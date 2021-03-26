@@ -11,7 +11,7 @@ public class NextflowServer {
 	public static void main(String[] args) throws Exception {
 		System.setProperty("NXF_HOME","~/.nextflow");
 		String zeppelinServerHost = "127.0.0.1";
-	    int port = 62839;//Constants.ZEPPELIN_INTERPRETER_DEFAUlT_PORT+1000; //30914
+	    int port = 57182;//Constants.ZEPPELIN_INTERPRETER_DEFAUlT_PORT+1000; //30914
 	    String portRange = "30914:30915";
 	    String interpreterGroupId = "nextflow-shared_process";
 	    if (args.length > 0) {

@@ -34,6 +34,7 @@
       }
     },
     "editor": {
+      "language": "java",
       "editOnDblClick": false,
       "completionSupport": false
     }
@@ -52,6 +53,7 @@
         }
     },
     "editor": {
+      "language": "sql",
       "editOnDblClick": false,
       "completionSupport": false
     }
