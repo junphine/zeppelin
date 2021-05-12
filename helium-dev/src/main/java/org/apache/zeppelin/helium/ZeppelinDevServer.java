@@ -40,7 +40,7 @@ public class ZeppelinDevServer extends
   private InterpreterOutput out;
   public ZeppelinDevServer(int port) throws Exception {
     super(null, port, null, ":");
-  }
+  } 
 
   @Override
   protected Interpreter getInterpreter(String sessionId, String className) throws TException {

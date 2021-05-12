@@ -352,8 +352,7 @@ This part should be removed when new version of bootstrap handles this issue.
 }
 
 .display-inline {
-  display: inline;
-  float: left;
+  display: inline;  
 }
 
 .modal-backdrop {

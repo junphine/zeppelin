@@ -1,0 +1,10 @@
+{
+  "type" : "APPLICATION",
+  "name" : "zeppelin.ml",
+  "description" : "Machine learning and Deeplearning application (example)",
+  "artifact" : "zeppelin-examples/zeppelin-ml/target/zeppelin-ml-0.10.0-SNAPSHOT.jar",
+  "className" : "org.apache.zeppelin.ml.DeepLearning",
+  "resources" : [[":org.apache.zeppelin.tabledata.InterpreterResultTableData"]],
+  "license" : "Apache-2.0",
+  "icon" : "<i class='fa fa-graduation-cap' ></i>"
+}

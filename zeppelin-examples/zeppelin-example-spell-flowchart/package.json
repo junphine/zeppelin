@@ -5,9 +5,8 @@
   "main": "index",
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {
-    "raphael": "2.2.0",
-    "flowchart.js": "^1.6.5",
+  "dependencies": {    
+    "flowchart.js": "^1.15.0",
     "zeppelin-spell": "*"
   },
   "spell": {

@@ -261,6 +261,10 @@ export default function HeliumService($http, $sce, baseUrlSrv) {
 
   const p = this.getAllEnabledPackages()
     .then((enabledPackageSearchResults) => {
+      // add@byron
+      if(!enabledPackageSearchResults) {
+        enabledPackageSearchResults = [];
+      }
       const promises = enabledPackageSearchResults.map((packageSearchResult) => {
         const pkgName = packageSearchResult.pkg.name;
         return this.getSingleBundle(pkgName);

@@ -337,7 +337,7 @@ function NotebookCtrl($scope, $route, $routeParams, $location, $rootScope,
     console.debug('received list of revisions %o', data);
     $scope.noteRevisions = data.revisionList;
     if ($scope.noteRevisions) {
-      if ($scope.noteRevisions.length === 0 || $scope.noteRevisions[0].id !== 'Head') {
+      if ($scope.noteRevisions.length > 0 && $scope.noteRevisions[0].id !== 'Head') {
         $scope.noteRevisions.splice(0, 0, {
           id: 'Head',
           message: 'Head',
@@ -1617,8 +1617,11 @@ function NotebookCtrl($scope, $route, $routeParams, $location, $rootScope,
       element: window,
       onDestroyElement: content,
       handler: () => {
-        const actionbarHeight = document.getElementById('actionbar').lastElementChild.clientHeight;
-        angular.element(document.getElementById('content')).css('padding-top', actionbarHeight - 20);
+        const actionbar = document.getElementById('actionbar');
+        if(actionbar){
+          const actionbarHeight = actionbar.lastElementChild.clientHeight;
+          angular.element(document.getElementById('content')).css('padding-top', actionbarHeight - 20);
+        }    
       },
     });
   }

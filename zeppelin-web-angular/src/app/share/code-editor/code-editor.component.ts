@@ -36,6 +36,7 @@ import { DiffEditorOptions, EditorOptions, JoinedEditorOptions, NzEditorMode } f
 // Import types from monaco editor.
 import { editor } from 'monaco-editor';
 import IEditor = editor.IEditor;
+import ICodeEditor = editor.ICodeEditor;
 import IDiffEditor = editor.IDiffEditor;
 import ITextModel = editor.ITextModel;
 
@@ -75,7 +76,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
   private resize$ = new Subject<void>();
   private editorOption$ = new BehaviorSubject<JoinedEditorOptions>({});
-  private editorInstance: IEditor | IDiffEditor;
+  private editorInstance: IEditor | IDiffEditor | ICodeEditor;
   private value = '';
   private modelSet = false;
 
@@ -156,16 +157,24 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
           : editor.createDiffEditor(this.el, {
               ...(this.editorOptionCached as DiffEditorOptions)
             });
+      // add@byron
+      if (this.nzEditorMode === 'normal') {
+        const codeEditor: ICodeEditor = this.editorInstance as ICodeEditor;
+        codeEditor.onDidChangeModelContent(() => {
+          if (this.emitValue) {
+            const content = codeEditor.getValue();
+            this.emitValue(content);
+          }
+          this.editorInstance.focus();
+        });
+      }
     });
   }
 
   private registerResizeChange(): void {
     this.ngZone.runOutsideAngular(() => {
       fromEvent(window, 'resize')
-        .pipe(
-          debounceTime(300),
-          takeUntil(this.destroy$)
-        )
+        .pipe(debounceTime(300), takeUntil(this.destroy$))
         .subscribe(() => {
           this.layout();
         });

@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
  * Manages helium packages
  */
 public class Helium {
+  //add@byron
+  public static Helium instance = null;
   private Logger logger = LoggerFactory.getLogger(Helium.class);
   private List<HeliumRegistry> registry = new LinkedList<>();
 
@@ -104,6 +106,8 @@ public class Helium {
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
+    
+    instance = this; //add@byron
   }
 
   /**

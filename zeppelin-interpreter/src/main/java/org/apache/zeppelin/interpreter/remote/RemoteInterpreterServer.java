@@ -167,7 +167,7 @@ public class RemoteInterpreterServer extends Thread
       this.port = RemoteInterpreterUtils.findAvailablePort(portRange);
       this.host = RemoteInterpreterUtils.findAvailableHostAddress();
     } else {
-      // DevInterpreter
+      // DevInterpreter      
       this.port = intpEventServerPort;
     }
     this.isTest = isTest;
@@ -348,6 +348,17 @@ public class RemoteInterpreterServer extends Thread
       className, Map<String, String> properties, String userName) throws TException {
     try {
       if (interpreterGroup == null) {
+		String intpEventServerHost = properties.get("zeppelin.intpEventServerHost");
+		String intpEventServerPort = properties.get("zeppelin.intpEventServerPort");
+		if(intpEventServerHost!=null && intpEventServerPort!=null) {
+		  if(this.intpEventServerHost==null) {
+		  	this.intpEventServerHost = intpEventServerHost;
+		  	this.intpEventServerPort = Integer.valueOf(intpEventServerPort);
+		  	this.intpEventClient = new RemoteInterpreterEventClient(this.intpEventServerHost, this.intpEventServerPort,
+		  	   this.zConf.getInt(ZeppelinConfiguration.ConfVars.ZEPPELIN_INTERPRETER_CONNECTION_POOL_SIZE));
+		  }
+		}
+      
         interpreterGroup = new InterpreterGroup(interpreterGroupId);
         angularObjectRegistry = new AngularObjectRegistry(interpreterGroup.getId(), intpEventClient);
         hookRegistry = new InterpreterHookRegistry();
@@ -356,7 +367,8 @@ public class RemoteInterpreterServer extends Thread
         interpreterGroup.setAngularObjectRegistry(angularObjectRegistry);
         interpreterGroup.setResourcePool(resourcePool);
         intpEventClient.setIntpGroupId(interpreterGroupId);
-
+        
+       
         String localRepoPath = properties.get("zeppelin.interpreter.localRepo");
         if (properties.containsKey("zeppelin.interpreter.output.limit")) {
           InterpreterOutput.LIMIT = Integer.parseInt(
@@ -1393,6 +1405,12 @@ public class RemoteInterpreterServer extends Thread
             runningApp.pkg.getResources(),
             context.getNoteId(),
             context.getParagraphId());
+        
+        //add@byron
+        if(resource==null) {
+        	return new RemoteApplicationResult(false, "Application resource does not exists");
+        }
+        //end@
         for (Resource res : resource) {
           System.err.println("Resource " + res.get());
         }

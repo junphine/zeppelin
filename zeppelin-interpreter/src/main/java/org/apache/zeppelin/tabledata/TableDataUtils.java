@@ -19,8 +19,11 @@ package org.apache.zeppelin.tabledata;
 
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class TableDataUtils {
 
@@ -55,5 +58,41 @@ public class TableDataUtils {
     return Arrays.stream(columns)
             .map(TableDataUtils::normalizeColumn)
             .collect(Collectors.toList());
+  }
+  
+  //add@byron
+  public static String outputString(TableData tableData) {
+	StringBuffer sb = new StringBuffer();
+	int count = 0;
+	
+	boolean rowStarted = false;
+	for (ColumnDef field : tableData.columns()) {
+		if (rowStarted) {
+			sb.append('\t');
+		}
+		sb.append(field.name());
+		rowStarted = true;
+	}
+	sb.append('\n');
+	
+	Iterator<Row> rows = tableData.rows();
+	
+	while (rows.hasNext()) {
+		Row row = rows.next();
+		Object[] objects = row.get();
+	
+		count++;
+		rowStarted = false;
+		for (Object field : objects) {
+			if (rowStarted) {
+				sb.append('\t');
+			}
+			sb.append(field);
+			rowStarted = true;
+		}
+		sb.append('\n');
+	}
+
+	return sb.toString();
   }
 }

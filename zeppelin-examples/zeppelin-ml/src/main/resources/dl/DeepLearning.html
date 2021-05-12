@@ -1,0 +1,48 @@
+<div style="width:62%;">
+<div class="input-group" style="width:85%;">
+  <span class="input-group-addon">回归算法</span>
+  <select class="form-control"
+         ng-model="algorithm">
+       <option value="mlr" >MultipleLinearRegression</option>  
+       <option value="pa" >PassiveAggressive</option>  
+       <option value="rf" >RandomForest</option>  
+       <option value="libsvm" >LibSVM</option> 
+       <option value="sgb" >StochasticGradientBoosting</option> 
+  </select>
+</div>
+<div class="input-group">
+  <span class="input-group-addon">模型参数</span>
+  <input type="text"
+         class="form-control"
+         ng-model="iteration"></input>
+  <span class="input-group-btn">
+    <button class="btn btn-default"
+            type="button"
+            ng-click="run='running'">
+      <span ng-show="run==='idle'">训练</span>
+      <span ng-show="run!=='idle'"><i class="fa fa-spinner fa-spin"> </i></span>
+    </button>
+  </span>
+</div>
+<br />
+<div class="input-group"
+     ng-show="predictBtn">
+  <span class="input-group-addon">特征数据</span>
+  <input type="text"
+         class="form-control" placeholder="多值用逗号分隔"
+         ng-model="predictInput"></input>
+  <span class="input-group-btn">
+    <button class="btn btn-default"
+            type="button"
+            ng-click="predictBtn=predictBtn+1">
+      <span>预测</span>
+    </button>
+  </span>
+
+</div>
+
+<br />
+<div ng-show="predictBtn">
+   预测值 : {{predictedValue}}
+</div>
+</div>

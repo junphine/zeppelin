@@ -497,14 +497,36 @@ public class Paragraph extends JobWithProgressPoller<InterpreterResult> implemen
 
         if (Code.KEEP_PREVIOUS_RESULT == ret.code()) {
           return getReturn();
-        }
-
+        }      
+       
+        
         Paragraph p = getUserParagraph(getUser());
         if (null != p) {
+          // add@byron
+          int index = 0;
+          for(InterpreterResultMessage msg: ret.message()) {        	 
+        	  if(msg.getData().length()>3 && msg.getData().charAt(0)=='%') {
+        		  int i=0;
+        		  for( ;i< msg.getData().length();i++) {
+        			 if(msg.getData().charAt(i)==' ' || msg.getData().charAt(i)=='\n' || msg.getData().charAt(i)=='\r') 
+        				 break;
+        		  }
+        		  String directive = msg.getData().substring(0,i);        		      		  
+        		  ret.message().set(index, new InterpreterResultMessage(msg.getType(),msg.getData().substring(i+1),directive));
+        	  }
+        	  index++;
+          }
+          //end@
           p.setResult(ret);
           p.settings.setParams(settings.getParams());
+        }        
+        
+        // add@byron   
+        this.setResult(ret);
+        if(ret.code()==null || ret.code() == InterpreterResult.Code.SUCCESS) {
+      	  this.note.fireParagraphStatusChangeEvent(this, Job.Status.FINISHED);
         }
-
+        // end@
         return ret;
       } finally {
         InterpreterContext.remove();

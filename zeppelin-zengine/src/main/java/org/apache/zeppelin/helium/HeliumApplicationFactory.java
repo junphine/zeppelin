@@ -300,6 +300,9 @@ public class HeliumApplicationFactory implements ApplicationEventListener, NoteE
                 client.runApplication(app.getId()));
         if (ret.isSuccess()) {
           // success
+          // add@byron
+           app.setOutput(ret.getMsg());           
+           //end@
         } else {
           throw new ApplicationException(ret.getMsg());
         }
@@ -420,12 +423,19 @@ public class HeliumApplicationFactory implements ApplicationEventListener, NoteE
 
   @Override
   public void onParagraphCreate(Paragraph p) {
-
+	  //add@byron
+	  if(Helium.instance!=null) {
+		 for(HeliumPackageSearchResult pkg: Helium.instance.getAllEnabledPackages()) {
+			 if(pkg.getPkg().getType()==HeliumType.APPLICATION) {
+				 p.createOrGetApplicationState(pkg.getPkg());
+			 }
+		 }
+	  }
   }
 
   @Override
   public void onParagraphUpdate(Paragraph p) throws IOException {
-
+	
   }
 
   @Override

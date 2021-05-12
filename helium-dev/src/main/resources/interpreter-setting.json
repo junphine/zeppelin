@@ -7,8 +7,8 @@
       "port": {
         "envName": "PORT",
         "propertyName": "port",
-        "defaultValue": "jdbc:postgresql://localhost:5432/",
-        "description": "The URL for JDBC.",
+        "defaultValue": "29914",
+        "description": "The Port for Dev Server.",
         "type": "string"
       }
     },

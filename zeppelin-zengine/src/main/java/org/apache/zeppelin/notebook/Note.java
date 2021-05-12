@@ -44,6 +44,7 @@ import org.apache.zeppelin.interpreter.remote.RemoteAngularObjectRegistry;
 import org.apache.zeppelin.interpreter.thrift.InterpreterCompletion;
 import org.apache.zeppelin.notebook.utility.IdHashes;
 import org.apache.zeppelin.scheduler.ExecutorFactory;
+import org.apache.zeppelin.scheduler.Job;
 import org.apache.zeppelin.scheduler.Job.Status;
 import org.apache.zeppelin.user.AuthenticationInfo;
 import org.apache.zeppelin.user.Credentials;
@@ -540,6 +541,13 @@ public class Note implements JsonSerializable {
   public void fireParagraphUpdateEvent(Paragraph p) throws IOException {
     for (NoteEventListener listener : noteEventListeners) {
       listener.onParagraphUpdate(p);
+    }
+  }
+  
+  //add@byron
+  public void fireParagraphStatusChangeEvent(Paragraph p,Job.Status status) throws IOException {
+    for (NoteEventListener listener : noteEventListeners) {
+      listener.onParagraphStatusChange(p, status);
     }
   }
 

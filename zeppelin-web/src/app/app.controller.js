@@ -41,7 +41,11 @@ function MainCtrl($scope, $rootScope, $window, arrayOrderingSrv) {
 
   // Set The lookAndFeel to default on every page
   $rootScope.$on('$routeChangeStart', function(event, next, current) {
-    $rootScope.$broadcast('setLookAndFeel', 'default');
+	// modify@byron
+    if (next.originalPath !== '/') {
+      $rootScope.$broadcast('setLookAndFeel', 'default');
+    }
+    
   });
 
   $rootScope.noteName = function(note) {

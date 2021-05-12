@@ -22,6 +22,7 @@ import {
 } from 'zeppelin-spell';
 
 import 'whatwg-fetch';
+import md5 from 'js-md5';
 
 export default class TranslatorSpell extends SpellBase {
     constructor() {
@@ -38,6 +39,7 @@ export default class TranslatorSpell extends SpellBase {
     interpret(paragraphText, config) {
         const parsed = this.parseConfig(paragraphText);
         const auth = config['access-token'];
+        const key = config['access-key'];
         const source = parsed.source;
         const target = parsed.target;
         const text = parsed.text;
@@ -51,12 +53,12 @@ export default class TranslatorSpell extends SpellBase {
             .add('<h4>Translation Result</h4>', DefaultDisplayType.HTML)
             // or use display system implicitly like
             // .add('%html <h4>Translation From English To Korean</h4>')
-            .add(this.translate(source, target, auth, text));
+            .add(this.translate(source, target, key, auth, text));
         return result;
     }
 
     parseConfig(text) {
-        const pattern = /^\s*(\S+)-(\S+)\s*([\S\s]*)/g;
+        const pattern = /^\s*(\S+)\s+(\S+)\s+([\S\s]*)/g;
         const match = pattern.exec(text);
 
         if (!match) {
@@ -70,30 +72,46 @@ export default class TranslatorSpell extends SpellBase {
         }
     }
 
-    translate(source, target, auth, text) {
-        return fetch('https://translation.googleapis.com/language/translate/v2', {
+    translate(source, target, key, pid, text) {
+    	const salt = 'zeppelin';    	
+    	const sign = md5(pid + text + salt + key);
+        return fetch('http://fanyi.sogou.com/reventondc/api/sogouTranslate', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth}`,
+            	'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'                
             },
-            body: JSON.stringify({
+            body: this.queryStringify({
                 'q': text,
-                'source': source,
-                'target': target,
-                'format': 'text'
+                'from': source,
+                'to': target,
+                'pid': pid,
+                'salt': salt,
+                'sign': sign
             })
         }).then(response => {
             if (response.status === 200) {
                 return response.json()
             }
-            throw new Error(`https://translation.googleapis.com/language/translate/v2 ${response.status} (${response.statusText})`);
+            throw new Error(`http://fanyi.sogou.com/reventondc/api/sogouTranslate ${response.status} (${response.statusText})`);
         }).then((json) => {
-            const extracted = json.data.translations.map(t => {
-                return t.translatedText;
-            });
-            return extracted.join('\n');
+        	if(json.message){
+        		return json.message;
+        	}
+            const extracted = json.translation
+            return extracted;
         });
+    }
+    
+    queryStringify(data){
+    	var query = '';
+    	for(var n in data){
+    		if(query){
+    			query+='&';
+    		}
+    		query+=n+'='+data[n];
+    	}
+    	return query;
     }
 }
 

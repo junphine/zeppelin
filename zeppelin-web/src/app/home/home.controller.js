@@ -29,14 +29,15 @@ function HomeCtrl($scope, noteListFactory, websocketMsgSrv, $rootScope, arrayOrd
   vm.notebookHome = false;
   vm.noteCustomHome = true;
   if ($rootScope.ticket !== undefined) {
-    vm.staticHome = false;
+    vm.staticHome = true; // modify@byron to true
   } else {
-    vm.staticHome = true; // modify@byron to false
+    vm.staticHome = false; // modify@byron to false
   }
 
   $scope.isReloading = false;
   $scope.TRASH_FOLDER_ID = TRASH_FOLDER_ID;
   $scope.query = {q: ''};
+  $scope.viewOnly = true;
 
   $scope.initHome = function() {
     websocketMsgSrv.getHomeNote();
@@ -69,7 +70,7 @@ function HomeCtrl($scope, noteListFactory, websocketMsgSrv, $rootScope, arrayOrd
       return;
     }
 
-    if (note) {
+    if (note && $rootScope.ticket === undefined) {
       vm.note = note;
 
       // initialize look And Feel

@@ -43,6 +43,9 @@ public class InterpreterResultMessageOutput extends OutputStream {
   private InterpreterOutputChangeWatcher watcher;
   private final InterpreterResultMessageOutputListener flushListener;
   private InterpreterResult.Type type = InterpreterResult.Type.TEXT;
+  // add@byron
+  private String directive;
+
   private boolean firstWrite = true;
   private boolean enableTableAppend = true;
 
@@ -76,6 +79,10 @@ public class InterpreterResultMessageOutput extends OutputStream {
       clear();
       this.type = type;
     }
+  }
+  
+  public void setDirective(String directive) {
+	this.directive = directive;
   }
 
   public void clear() {
@@ -217,7 +224,8 @@ public class InterpreterResultMessageOutput extends OutputStream {
   }
 
   public InterpreterResultMessage toInterpreterResultMessage() throws IOException {
-    return new InterpreterResultMessage(type, new String(toByteArray()));
+	//modify@byron
+    return new InterpreterResultMessage(type, new String(toByteArray(),"utf-8"), this.directive);
   }
 
   private void flush(boolean append) throws IOException {

@@ -226,13 +226,13 @@ public class ZeppelinServer extends ResourceConfig {
     // Multiple Web UI
     final WebAppContext defaultWebApp = setupWebAppContext(contexts, conf, conf.getString(ConfVars.ZEPPELIN_WAR), conf.getServerContextPath());
     final WebAppContext nextWebApp = setupWebAppContext(contexts, conf, conf.getString(ConfVars.ZEPPELIN_ANGULAR_WAR), WEB_APP_CONTEXT_NEXT);
-    // add@byron Nextflow Web
-    String towerPath = conf.getString(ConfVars.ZEPPELIN_PLUGINS_DIR)+"/tower-web";
-    final WebAppContext towerWebApp = setupWebAppContext(contexts, conf, towerPath, "/tower-web");
+    // add@byron Vue Plugin Web
+    String vuePluginPath = conf.getString(ConfVars.ZEPPELIN_PLUGINS_DIR)+"/web-plugin";
+    final WebAppContext pluginWebApp = setupWebAppContext(contexts, conf, vuePluginPath, "/web-plugin");
 
     initWebApp(defaultWebApp);
     initWebApp(nextWebApp);    
-    initWebApp(towerWebApp);
+    initWebApp(pluginWebApp);
     
     // Cluster Manager Server
     setupClusterManagerServer(sharedServiceLocator);

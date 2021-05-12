@@ -105,5 +105,6 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:apache/zeppelin.git"
-  }
+  },
+  "__npminstall_done": false
 }

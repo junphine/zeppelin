@@ -28,7 +28,7 @@ function ResizableDirective() {
     let removeEventByID = function(id) {
       let events = jQuery._data(config.element, 'events')[config.eventType];
       if (!events) { //add@byron
-          return;
+        return;
       }
       for (let i=0; i < events.length; i++) {
         if (events[i].data && events[i].data.eventID === id) {

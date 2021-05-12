@@ -24,6 +24,8 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.ignite.IgniteSystemProperties.IGNITE_JETTY_PORT;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -104,6 +106,8 @@ public class IgniteInterpreter extends GroovyInterpreter {
 		}
 
 		initIgnite();
+		
+		IgniteWebConsoleAgent.create(this.getProperties());
 	}
 
 	private List<File> currentClassPath() {
@@ -148,6 +152,8 @@ public class IgniteInterpreter extends GroovyInterpreter {
 					IgniteConfiguration conf = new IgniteConfiguration();
 
 					conf.setClientMode(Boolean.parseBoolean(getProperty(IGNITE_CLIENT_MODE)));
+					
+					System.setProperty(IGNITE_JETTY_PORT, String.valueOf("8081"));
 
 					TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
 					ipFinder.setAddresses(getAddresses());
@@ -156,8 +162,7 @@ public class IgniteInterpreter extends GroovyInterpreter {
 					discoSpi.setIpFinder(ipFinder);
 					conf.setDiscoverySpi(discoSpi);
 
-					conf.setPeerClassLoadingEnabled(
-							Boolean.parseBoolean(getProperty(IGNITE_PEER_CLASS_LOADING_ENABLED)));
+					conf.setPeerClassLoadingEnabled(Boolean.parseBoolean(getProperty(IGNITE_PEER_CLASS_LOADING_ENABLED)));
 
 					ignite = Ignition.start(conf);
 				}
@@ -204,7 +209,7 @@ public class IgniteInterpreter extends GroovyInterpreter {
 			return Collections.emptyList();
 		}
 
-		String[] tokens = prop.split(",");
+		String[] tokens = prop.split(",|\\s");
 		List<String> addresses = new ArrayList<>(tokens.length);
 		Collections.addAll(addresses, tokens);
 

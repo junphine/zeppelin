@@ -147,7 +147,7 @@ export class NotebookParagraphCodeEditorComponent implements OnChanges, OnDestro
         glyphMargin: false,
         folding: false,
         scrollBeyondLastLine: false,
-        contextmenu: false,
+        contextmenu: true,
         matchBrackets: false
       });
     }

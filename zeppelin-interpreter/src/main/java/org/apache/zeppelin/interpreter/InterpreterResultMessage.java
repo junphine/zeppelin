@@ -24,10 +24,17 @@ import java.io.Serializable;
 public class InterpreterResultMessage implements Serializable {
   InterpreterResult.Type type;
   String data;
+  String directive;
 
   public InterpreterResultMessage(InterpreterResult.Type type, String data) {
     this.type = type;
     this.data = data;
+  }
+  
+  public InterpreterResultMessage(InterpreterResult.Type type, String data, String directive) {
+    this.type = type;
+    this.data = data;
+    this.directive = directive;
   }
 
   public InterpreterResult.Type getType() {
@@ -36,6 +43,18 @@ public class InterpreterResultMessage implements Serializable {
 
   public String getData() {
     return data;
+  }
+  
+  public String getDirective() {
+	return directive;
+  }
+  
+  public void setType(InterpreterResult.Type type) {
+	this.type = type;
+  }
+  
+  public void setDirective(String directive) {
+	this.directive = directive;
   }
 
   public String toString() {

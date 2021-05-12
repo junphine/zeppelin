@@ -40,3 +40,48 @@ body {
 .nv-controlsWrap {
   display: none;
 }
+
+
+.box {
+  border: 0;
+  min-height: 0;
+}
+
+.box:hover,
+.well:hover {
+  background: white;
+  border: 0;
+}
+
+.paragraph-col {
+  border: 0 solid white;
+}
+
+.paragraph-space {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.graphContainer {
+  margin-bottom: 0 !important;
+}
+
+.paragraph {
+  min-height: 32px;
+}
+
+.paragraph .control {
+  visibility: hidden;
+  display: none !important;
+}
+
+.paragraph:hover .control {
+  visibility: hidden;
+}
+
+.executionTime,
+.nv-controlsWrap,
+.lastEmptyParagraph {
+  display: none;
+}
+

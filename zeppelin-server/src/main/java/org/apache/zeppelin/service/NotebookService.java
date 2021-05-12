@@ -23,6 +23,11 @@ import static org.apache.zeppelin.conf.ZeppelinConfiguration.ConfVars.ZEPPELIN_N
 import static org.apache.zeppelin.interpreter.InterpreterResult.Code.ERROR;
 
 import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,6 +83,8 @@ public class NotebookService {
   private static final Logger LOGGER = LoggerFactory.getLogger(NotebookService.class);
   private static final DateTimeFormatter TRASH_CONFLICT_TIMESTAMP_FORMATTER =
       DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+  
+  private static final Gson gson = new Gson();
 
   private ZeppelinConfiguration zConf;
   private Notebook notebook;
@@ -1103,7 +1110,31 @@ public class NotebookService {
       Note note = notebook.getNote(noteId);
       Paragraph p = setParagraphUsingMessage(note, message, paragraphId,
           text, title, params, config);
-      p.setResult((InterpreterResult) message.get("results"));
+      
+      Object results = message.get("results");
+      if(results instanceof InterpreterResult) {
+    	  p.setResult((InterpreterResult) results);
+      }
+      else if(results instanceof Map){ 
+    	  // add@byron
+    	  Map<String,Object> map = (Map<String,Object>) results;
+    	  List<Map> members = (List)map.get("msg");
+    	  if(members!=null && members.size()>0) {
+    		  for(Map<String, Object> item: members) {
+    			 for(Map.Entry<String, Object> it: item.entrySet()) {
+    				 if(it.getKey().equals("type")) {
+    					 item.put("directive", it.getValue());
+    					 break;
+    				 }
+    			 }
+    		  }
+    	  }
+    	  JsonObject json = (JsonObject)gson.toJsonTree(map);
+    	  InterpreterResult results2 = gson.fromJson(json,InterpreterResult.class);
+    	  p.setResult((InterpreterResult) results2);
+    	  
+    	  // end@
+      }
       p.setErrorMessage((String) message.get("errorMessage"));
       p.setStatusWithoutNotification(status);
 

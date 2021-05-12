@@ -156,12 +156,16 @@ public class RemoteInterpreter extends Interpreter {
           String msg = interpreterProcess.getErrorMessage();
           interpreterProcess.stop(); //add@byron
           interpreterProcess = null; //add@byron
+          isCreated = false; //add@byron
           throw new IOException("Interpreter process is not running\n" + msg);
         }
+        Properties p = getProperties();
+        p.put("zeppelin.intpEventServerHost", interpreterProcess.intpEventServerHost);
+        p.put("zeppelin.intpEventServerPort", String.valueOf(interpreterProcess.intpEventServerPort));
         interpreterProcess.callRemoteFunction(client -> {
           LOGGER.info("Create RemoteInterpreter {}", getClassName());
           client.createInterpreter(getInterpreterGroup().getId(), sessionId,
-              className, (Map) getProperties(), getUserName());
+              className, (Map)p , getUserName());
           return null;
         });
         isCreated = true;

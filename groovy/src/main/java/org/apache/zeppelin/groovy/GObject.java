@@ -24,6 +24,13 @@ import org.apache.zeppelin.display.AngularObjectRegistry;
 import org.apache.zeppelin.display.GUI;
 import org.apache.zeppelin.display.ui.OptionInput.ParamOption;
 import org.apache.zeppelin.interpreter.InterpreterContext;
+import org.apache.zeppelin.interpreter.InterpreterResult;
+import org.apache.zeppelin.interpreter.InterpreterResultMessage;
+import org.apache.zeppelin.resource.Resource;
+import org.apache.zeppelin.resource.ResourceId;
+import org.apache.zeppelin.tabledata.InterpreterResultTableData;
+import org.apache.zeppelin.tabledata.TableData;
+import org.apache.zeppelin.tabledata.TableDataUtils;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -175,7 +182,65 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
     startOutputType("%angular");
     return new MarkupBuilder(out);
   }
+  
+  public Object gerResource(String name) {
+	 Resource resource = this.interpreterContext.getResourcePool().get(this.interpreterContext.getNoteId(),this.interpreterContext.getParagraphId(), name);
+	 if(resource!=null) {
+		 return resource.get();
+	 }
+	 return z.get(name);
+  }
 
+  public void registerResource(String name, Object obj) {
+	 this.z.put(name,obj);
+	 this.interpreterContext.getResourcePool().put(this.interpreterContext.getNoteId(),this.interpreterContext.getParagraphId(), name, obj);
+  }
+  
+  public void registerTable(String name, Object obj) {
+	String data = null;
+	if (obj instanceof groovy.lang.Closure) {
+		// if closure run and get result collection
+		obj = ((Closure) obj).call();
+	}
+	if (obj instanceof TableData) {
+        //if closure run and get result collection
+       TableData tableData = ((TableData) obj);
+       z.put(name, tableData);
+       return ;
+    }
+	if (obj instanceof CharSequence) {
+		data = obj.toString();
+	} else if (obj instanceof Collection) {
+		StringBuffer sb = new StringBuffer();
+		int count = 0;
+		for (Object row : ((Collection) obj)) {
+			count++;
+			boolean rowStarted = false;
+			if (row instanceof Collection) {
+				for (Object field : ((Collection) row)) {
+					if (rowStarted) {
+						sb.append('\t');
+					}
+					sb.append(field);
+					rowStarted = true;
+				}
+			} else {
+				sb.append(row);
+			}
+			sb.append('\n');
+		}
+
+		data = sb.toString();
+	} else {
+		throw new RuntimeException("Not supported table value :" + obj.getClass());
+	}
+
+	InterpreterResultMessage msg = new InterpreterResultMessage(InterpreterResult.Type.TABLE, data);
+
+	InterpreterResultTableData tableData = new InterpreterResultTableData(msg);
+	registerResource(name,tableData);
+  }
+  
   /**
    * starts or continues rendering table rows.
    *
@@ -190,6 +255,13 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
     if (obj instanceof groovy.lang.Closure) {
       //if closure run and get result collection
       obj = ((Closure) obj).call();
+    }
+    if (obj instanceof TableData) {
+        //if closure run and get result collection
+       TableData tableData = ((TableData) obj);
+       String output = TableDataUtils.outputString(tableData);
+       sb.append(output);
+       return ;
     }
     if (obj instanceof Collection) {
       int count = 0;
@@ -211,7 +283,8 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
       }
     } else {
       throw new RuntimeException("Not supported table value :" + obj.getClass());
-    }
+    }    
+   
   }
 
   private AngularObject getAngularObject(String name) {

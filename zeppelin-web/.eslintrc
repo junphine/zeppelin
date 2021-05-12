@@ -1,5 +1,5 @@
 {
-  "extends": ["eslint:recommended", "google"],
+  "extends": ["eslint:recommended"],
   "env": {
     "browser": true,
     "jasmine": true,
@@ -48,7 +48,7 @@
     "no-console": ["off"],
     "valid-jsdoc": "off",
     "semi": [2, "always"],
-    "no-invalid-this": 1,
+    "no-invalid-this": 'off',
 	'linebreak-style': 'off',
     "indent": ["error", 2, { "SwitchCase": 1 }]
   }

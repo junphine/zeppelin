@@ -173,7 +173,29 @@ function ResultCtrl($scope, $rootScope, $route, $window, $routeParams, $location
     return ($scope.mouseOver) ? {'pointer-events': 'auto'}
       : {'pointer-events': 'none'};
   };
+  
+  //add@byron  
+  $scope.addEvent = function(config) {
+    let removeEventByID = function(id) {
+      let events = jQuery._data(config.element, 'events')[config.eventType];
+      if (!events) {
+        return;
+      }
+      for (let i=0; i < events.length; i++) {
+        if (events[i].data && events[i].data.eventID === id) {
+          events.splice(i, 1);
+          i--;
+        }
+      }
+    };
 
+    removeEventByID(config.eventID);
+    angular.element(config.element).bind(config.eventType, {eventID: config.eventID}, config.handler);
+    angular.element(config.onDestroyElement).scope().$on('$destroy', () => {
+      removeEventByID(config.eventID);
+    });
+  };
+  //end@  
   $scope.init = function(result, config, paragraph, index) {
     // register helium plugin vis packages
     let visPackages = heliumService.getVisualizationCachedPackages();
@@ -251,9 +273,12 @@ function ResultCtrl($scope, $rootScope, $route, $window, $routeParams, $location
     let refresh = !angular.equals(newConfig, $scope.config) ||
       !angular.equals(result.type, $scope.type) ||
       !angular.equals(result.data, data);
-
-    updateData(result, newConfig, paragraph, resultIndex);
-    renderResult($scope.type, refresh);
+    // modify@byron
+    if(refresh){
+      updateData(result, newConfig, paragraph, resultIndex);
+      renderResult($scope.type, refresh);
+    }
+    
   });
 
   $scope.$on('appendParagraphOutput', function(event, data) {
@@ -293,7 +318,8 @@ function ResultCtrl($scope, $rootScope, $route, $window, $routeParams, $location
     resultIndex = parseInt(index);
 
     $scope.id = paragraph.id + '_' + index;
-    $scope.type = result.type;
+    // modify@byron
+    $scope.type = result.directive ? result.directive : result.type;
     config = config ? config : {};
 
     // initialize default config values
@@ -941,6 +967,7 @@ function ResultCtrl($scope, $rootScope, $route, $window, $routeParams, $location
     $http.post(baseUrlSrv.getRestApiBase() + '/helium/load/' + noteId + '/' + paragraph.id, heliumPackage)
       .success(function(data, status, headers, config) {
         console.log('Load app %o', data);
+        $scope.onMouseOver(); //add@byron
       })
       .error(function(err, status, headers, config) {
         console.log('Error %o', err);

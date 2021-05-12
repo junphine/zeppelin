@@ -264,7 +264,8 @@ public class NotebookServer extends WebSocketServlet
       }
 
       String ticket = TicketContainer.instance.getTicket(messagereceived.principal);
-      if (ticket != null &&
+     // modify@byron add !StringUtils.isEmpty(messagereceived.principal)
+      if (ticket != null && !StringUtils.isEmpty(messagereceived.principal) &&
           (messagereceived.ticket == null || !ticket.equals(messagereceived.ticket))) {
         /* not to pollute logs, log instead of exception */
         if (StringUtils.isEmpty(messagereceived.ticket)) {
@@ -281,6 +282,7 @@ public class NotebookServer extends WebSocketServlet
       }
 
       ZeppelinConfiguration conf = ZeppelinConfiguration.create();
+      
       boolean allowAnonymous = conf.isAnonymousAllowed();
       if (!allowAnonymous && messagereceived.principal.equals("anonymous")) {
         LOG.warn("Anonymous access not allowed.");

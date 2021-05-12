@@ -54,7 +54,7 @@ import org.apache.zeppelin.scheduler.SchedulerFactory;
  */
 public class IgniteSqlInterpreter extends Interpreter {
   static final String IGNITE_JDBC_DRIVER_NAME = "org.apache.ignite.IgniteJdbcDriver";
-
+  static final String IGNITE_JDBC_THIN_DRIVER_NAME = "org.apache.ignite.IgniteJdbcThinDriver";
   static final String IGNITE_JDBC_URL = "ignite.jdbc.url";
 
   private Logger logger = LoggerFactory.getLogger(IgniteSqlInterpreter.class);
@@ -69,11 +69,16 @@ public class IgniteSqlInterpreter extends Interpreter {
 
   @Override
   public void open() {
+	String jdbcUrl = getProperty(IGNITE_JDBC_URL);
     try {
      // Register JDBC driver.
-      Class.forName("org.apache.ignite.IgniteJdbcThinDriver");
-     // Register JDBC Client driver.
-      Class.forName(IGNITE_JDBC_DRIVER_NAME);
+      if(jdbcUrl.indexOf("thin:")>0) {
+        Class.forName(IGNITE_JDBC_THIN_DRIVER_NAME);
+      }
+      else {
+       // Register JDBC Client driver.
+        Class.forName(IGNITE_JDBC_DRIVER_NAME);
+      }
     } catch (ClassNotFoundException e) {
       logger.error("Can't find Ignite JDBC driver", e);
       connEx = e;
@@ -82,9 +87,12 @@ public class IgniteSqlInterpreter extends Interpreter {
 
     try {
       logger.info("connect to " + getProperty(IGNITE_JDBC_URL));
-      conn = DriverManager.getConnection(getProperty(IGNITE_JDBC_URL));
+      conn = DriverManager.getConnection(jdbcUrl);
       connEx = null;
       logger.info("Successfully created JDBC connection");
+      // launch a agent
+      IgniteWebConsoleAgent.create(this.getProperties());
+      
     } catch (Exception e) {
       logger.error("Can't open connection: ", e);
       connEx = e;

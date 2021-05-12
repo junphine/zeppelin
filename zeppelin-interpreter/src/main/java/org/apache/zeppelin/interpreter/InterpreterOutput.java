@@ -55,7 +55,7 @@ public class InterpreterOutput extends OutputStream {
   // disable table append by default, because table append may cause frontend output shaking.
   // so just refresh all output for streaming application, such as flink streaming sql output.
   private boolean enableTableAppend = false;
-
+  
   // change static var to set interpreter output limit
   // limit will be applied to all InterpreterOutput object.
   // so we can expect the consistent behavior
@@ -258,22 +258,22 @@ public class InterpreterOutput extends OutputStream {
           startOfTheNewLine = true;
         }
       }
-
+      String displaySystem = null;
       boolean flushBuffer = false;
       if (firstCharIsPercentSign) {
         if (b == ' ' || b == NEW_LINE_CHAR || b == '\t') {
           firstCharIsPercentSign = false;
-          String displaySystem = buffer.toString();
+          displaySystem  = buffer.toString();
           for (InterpreterResult.Type type : InterpreterResult.Type.values()) {
             if (displaySystem.equals('%' + type.name().toLowerCase())) {
               // new type detected
               setType(type);
-              previousChar = b;
+              previousChar = b;              
               return;
             }
           }
           // not a defined display system
-          flushBuffer = true;
+          flushBuffer = true;          
         } else {
           buffer.write(b);
           previousChar = b;
@@ -282,8 +282,12 @@ public class InterpreterOutput extends OutputStream {
       }
 
       out = getCurrentOutputForWriting();
-
-      if (flushBuffer) {
+      if(displaySystem!=null) {
+    	out.setDirective(displaySystem);
+    	out.write(displaySystem);
+    	out.write(' ');
+      }
+      if (flushBuffer) {    	
         out.write(buffer.toByteArray());
         buffer.reset();
       }
