@@ -118,6 +118,11 @@ public class ApplicationLoader {
     // get resource required by this package
     ResourceSet resources = findRequiredResourceSet(packageInfo.getResources(),
         context.getNoteId(), context.getParagraphId());
+    //add@byron
+    if(resources==null || resources.isEmpty()) {
+    	 throw new ApplicationException("resource is not exist!");
+    }
+    //end@
 
     // load class
     Class<Application> appClass = loadClass(packageInfo);

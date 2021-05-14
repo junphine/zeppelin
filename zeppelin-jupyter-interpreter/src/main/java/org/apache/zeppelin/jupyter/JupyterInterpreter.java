@@ -38,7 +38,7 @@ import java.util.Properties;
  */
 public class JupyterInterpreter extends AbstractInterpreter {
 
-  private Map<String, JupyterKernelInterpreter> kernelInterpreterMap = new HashMap<>();
+  private Map<String, AbstractInterpreter> kernelInterpreterMap = new HashMap<>();
 
   public JupyterInterpreter(Properties properties) {
     super(properties);
@@ -54,12 +54,15 @@ public class JupyterInterpreter extends AbstractInterpreter {
           String st, InterpreterContext context) throws InterpreterException {
     String kernel = context.getLocalProperties().get("kernel");
     if (kernel == null) {
+    	kernel = this.getProperty("jupyter.kernel");
+    }
+    if (kernel == null) {
       return new InterpreterResult(InterpreterResult.Code.ERROR, "No kernel is specified");
     }
-    JupyterKernelInterpreter kernelInterpreter = null;
+    AbstractInterpreter kernelInterpreter = null;
     synchronized (kernelInterpreterMap) {
       if (kernelInterpreterMap.containsKey(kernel)) {
-        kernelInterpreter = kernelInterpreterMap.get(kernel);
+        kernelInterpreter = kernelInterpreterMap.get(kernel);      
       } else {
         kernelInterpreter = new JupyterKernelInterpreter(kernel, properties);
         kernelInterpreter.open();
@@ -76,7 +79,7 @@ public class JupyterInterpreter extends AbstractInterpreter {
 
   @Override
   public void close() throws InterpreterException {
-    for (JupyterKernelInterpreter kernelInterpreter : kernelInterpreterMap.values()) {
+    for (AbstractInterpreter kernelInterpreter : kernelInterpreterMap.values()) {
       kernelInterpreter.close();
     }
   }
@@ -87,7 +90,7 @@ public class JupyterInterpreter extends AbstractInterpreter {
     if (kernel == null) {
       throw new InterpreterException("No kernel is specified");
     }
-    JupyterKernelInterpreter kernelInterpreter = kernelInterpreterMap.get(kernel);
+    AbstractInterpreter kernelInterpreter = kernelInterpreterMap.get(kernel);
     if (kernelInterpreter == null) {
       throw new InterpreterException("No such interpreter: " + kernel);
     }
@@ -105,7 +108,7 @@ public class JupyterInterpreter extends AbstractInterpreter {
     if (kernel == null) {
       throw new InterpreterException("No kernel is specified");
     }
-    JupyterKernelInterpreter kernelInterpreter = kernelInterpreterMap.get(kernel);
+    AbstractInterpreter kernelInterpreter = kernelInterpreterMap.get(kernel);
     if (kernelInterpreter == null) {
       throw new InterpreterException("No such interpreter: " + kernel);
     }
@@ -121,7 +124,7 @@ public class JupyterInterpreter extends AbstractInterpreter {
     if (kernel == null) {
       throw new InterpreterException("No kernel is specified");
     }
-    JupyterKernelInterpreter kernelInterpreter = kernelInterpreterMap.get(kernel);
+    AbstractInterpreter kernelInterpreter = kernelInterpreterMap.get(kernel);
     if (kernelInterpreter == null) {
       throw new InterpreterException("No such interpreter: " + kernel);
     }

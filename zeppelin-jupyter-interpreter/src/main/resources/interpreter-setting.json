@@ -4,12 +4,18 @@
     "name": "jupyter",
     "className": "org.apache.zeppelin.jupyter.JupyterInterpreter",
     "properties": {
+      "jupyter.kernel":{
+        "propertyName": "jupyter.kernel",
+        "defaultValue": "python",
+        "description": "The default jupyter kernal",
+        "type": "string"
+      }
     },
     "editor": {
-      "language": "text",
+      "language": "python",
       "editOnDblClick": false,
       "completionKey": "TAB",
       "completionSupport": true
     }
-  }
+  }  
 ]

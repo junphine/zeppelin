@@ -1,0 +1,10 @@
+/bin/
+/.classpath
+/.project
+/out/
+GroovyLexer.java
+GroovyLexer.tokens
+GroovyParser.java
+GroovyParser.tokens
+GroovyParserBaseListener.java
+GroovyParserListener.java

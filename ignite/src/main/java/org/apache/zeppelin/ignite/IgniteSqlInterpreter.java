@@ -19,22 +19,30 @@ package org.apache.zeppelin.ignite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.zeppelin.groovy.GroovyCompleter;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
 import org.apache.zeppelin.interpreter.InterpreterException;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
 import org.apache.zeppelin.interpreter.thrift.InterpreterCompletion;
+
 import org.apache.zeppelin.scheduler.Scheduler;
 import org.apache.zeppelin.scheduler.SchedulerFactory;
 
@@ -56,12 +64,18 @@ public class IgniteSqlInterpreter extends Interpreter {
   static final String IGNITE_JDBC_DRIVER_NAME = "org.apache.ignite.IgniteJdbcDriver";
   static final String IGNITE_JDBC_THIN_DRIVER_NAME = "org.apache.ignite.IgniteJdbcThinDriver";
   static final String IGNITE_JDBC_URL = "ignite.jdbc.url";
+  
+  static final String COMPLETER_SCHEMA_FILTERS_KEY = "completer.schemaFilters";
+  static final String COMPLETER_TTL_KEY = "completer.ttlInSeconds";
+  static final String DEFAULT_COMPLETER_TTL = "120";
 
   private Logger logger = LoggerFactory.getLogger(IgniteSqlInterpreter.class);
 
   private Connection conn;
   private Throwable connEx;
   private Statement curStmt;
+  
+  IgniteSqlCompleter igniteSqlCompleter;
 
   public IgniteSqlInterpreter(Properties property) {
     super(property);
@@ -92,6 +106,8 @@ public class IgniteSqlInterpreter extends Interpreter {
       logger.info("Successfully created JDBC connection");
       // launch a agent
       IgniteWebConsoleAgent.create(this.getProperties());
+      
+      igniteSqlCompleter = new IgniteSqlCompleter(conn,2000);
       
     } catch (Exception e) {
       logger.error("Can't open connection: ", e);
@@ -186,8 +202,55 @@ public class IgniteSqlInterpreter extends Interpreter {
   }
 
   @Override
-  public List<InterpreterCompletion> completion(String buf, int cursor,
-      InterpreterContext interpreterContext) {
-    return new LinkedList<>();
+  public List<InterpreterCompletion> completion(String buf, int cursor, InterpreterContext interpreterContext) throws InterpreterException {
+	  List<InterpreterCompletion> candidates = new ArrayList<>();
+	  
+	  String propertyKey = "ignite";
+	 
+	  IgniteSqlCompleter sqlCompleter = igniteSqlCompleter;
+	
+	  Connection connection = sqlCompleter.conn;
+	 
+	  sqlCompleter = createOrUpdateSqlCompleter(sqlCompleter, connection, propertyKey, buf, cursor);
+	  
+	  sqlCompleter.complete(buf, cursor, candidates);
+	
+	  return candidates;
   }
+  
+  private IgniteSqlCompleter createOrUpdateSqlCompleter(IgniteSqlCompleter sqlCompleter,
+	      final Connection connection, String propertyKey, final String buf, final int cursor) {
+	    String schemaFiltersKey = String.format("%s.%s", propertyKey, COMPLETER_SCHEMA_FILTERS_KEY);
+	    String sqlCompleterTtlKey = String.format("%s.%s", propertyKey, COMPLETER_TTL_KEY);
+	    final String schemaFiltersString = getProperty(schemaFiltersKey);
+	    int ttlInSeconds = Integer.valueOf(
+	        StringUtils.defaultIfEmpty(getProperty(sqlCompleterTtlKey), DEFAULT_COMPLETER_TTL)
+	    );
+	    final IgniteSqlCompleter completer = sqlCompleter;
+	    
+	    ExecutorService executorService = Executors.newFixedThreadPool(1);
+	    executorService.execute(new Runnable() {
+	      @Override
+	      public void run() {
+	        completer.createOrUpdateFromConnection(connection, schemaFiltersString, buf, cursor);
+	      }
+	    });
+
+	    executorService.shutdown();
+
+	    try {
+	      // protection to release connection
+	      executorService.awaitTermination(3, TimeUnit.SECONDS);
+	    } catch (InterruptedException e) {
+	    	logger.warn("Completion timeout", e);
+	      if (connection != null) {
+	        try {
+	          connection.close();
+	        } catch (SQLException e1) {
+	          logger.warn("Error close connection", e1);
+	        }
+	      }
+	    }
+	    return completer;
+	  }
 }

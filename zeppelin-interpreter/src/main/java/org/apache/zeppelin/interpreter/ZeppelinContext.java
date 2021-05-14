@@ -206,24 +206,7 @@ public abstract class ZeppelinContext {
                                ParamOption[] options,
                                List defaultChecked) {
     return checkbox(name, options, defaultChecked, false);
-  }
-
-  /**
-   * create paragraph level of dynamic form of checkbox with default checked items.
-   * @deprecated Use {@link #checkbox(String, ParamOption[], List<Object>) checkbox} instead.
-   *
-   * @param name
-   * @param defaultChecked
-   * @param options
-   * @return list of checked values of this checkbox
-   */
-  @Deprecated
-  @ZeppelinApi
-  public List<Object> checkbox(String name,
-                               List<Object> defaultChecked,
-                               ParamOption[] options) {
-    return checkbox(name, options, defaultChecked, false);
-  }
+  } 
 
   /**
    * create note level of dynamic form of checkbox with no item checked.
@@ -235,24 +218,7 @@ public abstract class ZeppelinContext {
   @ZeppelinApi
   public List<Object> noteCheckbox(String name, ParamOption[] options) {
     return checkbox(name, options, null, true);
-  }
-
-  /**
-   * create note level of dynamic form of checkbox with default checked items.
-   * @deprecated Use {@link #noteCheckbox(String, ParamOption[], List<Object>) noteCheckbox} instead.
-   *
-   * @param name
-   * @param defaultChecked
-   * @param options
-   * @return list of checked values of this checkbox
-   */
-  @Deprecated
-  @ZeppelinApi
-  public List<Object> noteCheckbox(String name,
-                                   List<Object> defaultChecked,
-                                   ParamOption[] options) {
-    return checkbox(name, options, defaultChecked, true);
-  }
+  }  
 
   /**
    * create note level of dynamic form of checkbox with default checked items.
@@ -297,22 +263,7 @@ public abstract class ZeppelinContext {
   public Object select(String name, ParamOption[] paramOptions) {
     return select(name, paramOptions, null, false);
   }
-
-  /**
-   * create paragraph level of dynamic form of Select with default selected item.
-   * @deprecated Use {@link #select(String, ParamOption[], Object) select} instead.
-   *
-   * @param name
-   * @param defaultValue
-   * @param paramOptions
-   * @return text value of selected item
-   */
-  @Deprecated
-  @ZeppelinApi
-  public Object select(String name, Object defaultValue, ParamOption[] paramOptions) {
-    return select(name, paramOptions, defaultValue, false);
-  }
-
+ 
   /**
    * create paragraph level of dynamic form of Select with default selected item.
    *
@@ -337,22 +288,7 @@ public abstract class ZeppelinContext {
   public Object noteSelect(String name, ParamOption[] paramOptions) {
     return select(name, null, paramOptions, true);
   }
-
-  /**
-   * create note level of dynamic form of Select with default selected item.
-   * @deprecated Use {@link #noteSelect(String, ParamOption[], Object) noteSelect} instead.
-   *
-   * @param name
-   * @param defaultValue
-   * @param paramOptions
-   * @return text value of selected item
-   */
-  @Deprecated
-  @ZeppelinApi
-  public Object noteSelect(String name, Object defaultValue, ParamOption[] paramOptions) {
-    return select(name, paramOptions, defaultValue, true);
-  }
-
+ 
   /**
    * create note level of dynamic form of Select with default selected item.
    *

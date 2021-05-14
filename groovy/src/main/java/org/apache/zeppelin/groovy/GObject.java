@@ -119,23 +119,23 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
 
   @ZeppelinApi
   public Object select(String name, Map<Object, String> options) {
-    return z.select(name, "", toParamOptions(options));
+    return z.select(name, toParamOptions(options), "");
   }
 
   @ZeppelinApi
   public Object select(String name, Object defaultValue, Map<Object, String> options) {
-    return z.select(name, defaultValue, toParamOptions(options));
+    return z.select(name, toParamOptions(options),defaultValue);
   }
 
   @ZeppelinApi
   public Collection<Object> checkbox(String name, Map<Object, String> options) {
-    return z.checkbox(name, new ArrayList<Object>(options.keySet()), toParamOptions(options));
+    return z.checkbox(name, toParamOptions(options),new ArrayList<Object>(options.keySet()));
   }
 
   @ZeppelinApi
   public Collection<Object> checkbox(String name, Collection<Object> defaultChecked,
       Map<Object, String> options) {
-    return z.checkbox(name, new ArrayList<Object>(defaultChecked), toParamOptions(options));
+    return z.checkbox(name, toParamOptions(options), new ArrayList<Object>(defaultChecked));
   }
 
 
@@ -183,7 +183,7 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
     return new MarkupBuilder(out);
   }
   
-  public Object gerResource(String name) {
+  public Object getResource(String name) {
 	 Resource resource = this.interpreterContext.getResourcePool().get(this.interpreterContext.getNoteId(),this.interpreterContext.getParagraphId(), name);
 	 if(resource!=null) {
 		 return resource.get();

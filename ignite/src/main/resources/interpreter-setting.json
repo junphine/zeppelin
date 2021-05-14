@@ -62,7 +62,7 @@
       }
     },
     "editor": {
-      "language": "java",
+      "language": "groovy",
       "editOnDblClick": false,
       "completionSupport": true
     }

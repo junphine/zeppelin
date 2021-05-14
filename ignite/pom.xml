@@ -73,7 +73,7 @@
        		<groupId>org.apache.ignite</groupId>
        		<artifactId>ignite-spring</artifactId>
        	</exclusion>
-       </exclusions> 
+       </exclusions>
      </dependency>
 
     <dependency>
