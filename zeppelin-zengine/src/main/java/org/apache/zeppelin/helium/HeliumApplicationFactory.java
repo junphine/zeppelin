@@ -423,14 +423,7 @@ public class HeliumApplicationFactory implements ApplicationEventListener, NoteE
 
   @Override
   public void onParagraphCreate(Paragraph p) {
-	  //add@byron
-	  if(Helium.instance!=null) {
-		 for(HeliumPackageSearchResult pkg: Helium.instance.getAllEnabledPackages()) {
-			 if(pkg.getPkg().getType()==HeliumType.APPLICATION) {
-				 p.createOrGetApplicationState(pkg.getPkg());
-			 }
-		 }
-	  }
+	 
   }
 
   @Override
@@ -440,7 +433,7 @@ public class HeliumApplicationFactory implements ApplicationEventListener, NoteE
 
   @Override
   public void onParagraphStatusChange(Paragraph p, Job.Status status) {
-    if (status == Job.Status.FINISHED) {
+    if (status == Job.Status.FINISHED) {     
       // refresh application
       List<ApplicationState> appStates = p.getAllApplicationStates();
 

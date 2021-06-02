@@ -93,6 +93,9 @@ public class GroovyCompleter {
     if(completionString.startsWith("import") || completionString.startsWith("new")) {
     	Class[] loadedClass = this.shell.getClassLoader().getLoadedClasses();
     	for(Class cls: loadedClass) {
+    		if(cls.getName().startsWith("class paragraph_")) {
+    			continue;
+    		}
     		completionList.add(cls.getName());
     		if(completionList.size()>10) {
     			break;
@@ -121,7 +124,7 @@ public class GroovyCompleter {
   }
 
   private String getCompletionTargetString(String text, int cursor) {
-    String[] completionSeqCharaters = {" ", "\n", "\t", "\r"};
+    String[] completionSeqCharaters = {"  ", "\n", "\t", "\r"};
     int completionEndPosition = cursor;
     int completionStartPosition = cursor;
     int indexOfReverseSeqPostion = cursor;

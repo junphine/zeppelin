@@ -271,6 +271,22 @@
       <artifactId>websocket-server</artifactId>
       <version>${jetty.version}</version>
     </dependency>
+    
+    <!-- <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-annotations</artifactId>
+      <version>${jetty.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.ow2.asm</groupId>
+      		<artifactId>asm-commons</artifactId>
+      	</exclusion>
+      	<exclusion>
+      		<groupId>org.ow2.asm</groupId>
+      		<artifactId>asm</artifactId>
+      	</exclusion>
+      </exclusions>
+    </dependency> -->
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -281,6 +297,12 @@
       <groupId>com.nimbusds</groupId>
       <artifactId>nimbus-jose-jwt</artifactId>
       <version>4.41.2</version>
+      <exclusions>
+      	<exclusion>
+      		<groupId>org.ow2.asm</groupId>
+      		<artifactId>asm</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

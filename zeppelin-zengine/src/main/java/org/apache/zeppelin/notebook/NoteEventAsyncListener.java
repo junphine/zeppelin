@@ -113,7 +113,9 @@ public abstract class NoteEventAsyncListener implements NoteEventListener {
             handleParagraphRemoveEvent((ParagraphRemoveEvent) event);
           } else if (event instanceof ParagraphUpdateEvent) {
             handleParagraphUpdateEvent((ParagraphUpdateEvent) event);
-          } else {
+          } else if (event instanceof ParagraphStatusChangeEvent) {
+            // add@byron
+          } else {        	  
             throw new RuntimeException("Unknown event: " + event.getClass().getSimpleName());
           }
         } catch (Exception e) {

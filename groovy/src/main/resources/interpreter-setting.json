@@ -18,25 +18,13 @@
       "completionSupport": true,
       "completionKey": "TAB"
     }
-  },  
+  },
+  
   {
     "group": "groovy",
     "name":  "groovyshell",
     "className": "org.apache.zeppelin.groovy.BeakerXKernelInterpreter",
-    "properties": {
-      "beakerx.kernel":{
-        "propertyName": "beakerx.kernel",
-        "defaultValue": "groovy",
-        "description": "The default beakerx kernal",
-        "type": "string"
-      },
-      "GROOVY_CLASSES": {
-        "envName": null,
-        "propertyName": "GROOVY_CLASSES",
-        "defaultValue": "",
-        "description": "The path for custom groovy classes location. If empty `./interpreter/groovy/classes`",
-        "type": "textarea"
-      }
+    "properties": {     
     },
     "editor": {
       "language":"groovy",
@@ -44,32 +32,6 @@
       "completionSupport": true,
       "completionKey": "TAB"
     }
-  },  
-   
-  {
-    "group": "groovy",
-    "name":  "javashell",
-    "className": "org.apache.zeppelin.groovy.BeakerXKernelInterpreter",
-    "properties": {
-      "beakerx.kernel":{
-        "propertyName": "beakerx.kernel",
-        "defaultValue": null,
-        "description": "The default beakerx kernal",
-        "type": "string"
-      },  
-      "JAVA_CLASSES": {
-        "envName": null,
-        "propertyName": "JAVA_CLASSES",
-        "defaultValue": "",
-        "description": "The path for custom java classes location. If empty `./interpreter/java/classes`",
-        "type": "textarea"
-      }   
-    },
-    "editor": {
-      "language":"java",
-      "editOnDblClick": false,
-      "completionSupport": true,
-      "completionKey": "TAB"
-    }
-  }
+  }  
+ 
 ]

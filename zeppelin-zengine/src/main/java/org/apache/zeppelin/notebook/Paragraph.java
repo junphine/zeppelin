@@ -522,10 +522,7 @@ public class Paragraph extends JobWithProgressPoller<InterpreterResult> implemen
         }        
         
         // add@byron   
-        this.setResult(ret);
-        if(ret.code()==null || ret.code() == InterpreterResult.Code.SUCCESS) {
-      	  this.note.fireParagraphStatusChangeEvent(this, Job.Status.FINISHED);
-        }
+        this.setResult(ret);        
         // end@
         return ret;
       } finally {

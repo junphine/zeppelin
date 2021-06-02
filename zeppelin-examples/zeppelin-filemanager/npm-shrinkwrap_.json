@@ -1,0 +1,11 @@
+{
+  "name": "angular-filemanager",
+  "version": "1.5.1",
+  "lockfileVersion": 1,
+  "requires": true,
+  "dependencies": {
+    "graceful-fs": {
+      "version": "4.2.4"
+    }
+  }
+}

@@ -63,7 +63,13 @@ public class JupyterInterpreter extends AbstractInterpreter {
     synchronized (kernelInterpreterMap) {
       if (kernelInterpreterMap.containsKey(kernel)) {
         kernelInterpreter = kernelInterpreterMap.get(kernel);      
-      } else {
+      } 
+      else if (kernel.equalsIgnoreCase("groovy") || kernel.equalsIgnoreCase("java")) {
+	    kernelInterpreter = new BeakerXKernelInterpreter(kernel, properties);
+        kernelInterpreter.open();
+        kernelInterpreterMap.put(kernel, kernelInterpreter);
+      } 
+      else {
         kernelInterpreter = new JupyterKernelInterpreter(kernel, properties);
         kernelInterpreter.open();
         kernelInterpreterMap.put(kernel, kernelInterpreter);

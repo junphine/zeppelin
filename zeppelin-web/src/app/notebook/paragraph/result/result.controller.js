@@ -276,7 +276,7 @@ function ResultCtrl($scope, $rootScope, $route, $window, $routeParams, $location
     // modify@byron
     if(refresh){
       updateData(result, newConfig, paragraph, resultIndex);
-      renderResult($scope.type, refresh);
+      renderResult($scope.type, true);
     }
     
   });
@@ -1005,8 +1005,8 @@ function ResultCtrl($scope, $rootScope, $route, $window, $routeParams, $location
 
     // add new app states
     _.forEach(appStates, function(app, idx) {
-      if ($scope.apps.length <= idx || $scope.apps[idx].id !== app.id) {
-        $scope.apps.splice(idx, 0, app);
+      if ($scope.apps.length <= idx || $scope.apps[idx].id !== app.id) {        
+        $scope.apps.splice(idx, 0, app);      
       }
     });
   };

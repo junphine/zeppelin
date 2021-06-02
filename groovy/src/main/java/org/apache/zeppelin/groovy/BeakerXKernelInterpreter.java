@@ -46,7 +46,6 @@ import com.twosigma.beakerx.evaluator.BaseEvaluator;
 import com.twosigma.beakerx.evaluator.ClasspathScannerImpl;
 import com.twosigma.beakerx.groovy.evaluator.GroovyEvaluator;
 import com.twosigma.beakerx.groovy.kernel.GroovyDefaultVariables;
-import com.twosigma.beakerx.javash.evaluator.JavaEvaluator;
 import com.twosigma.beakerx.jvm.object.Configuration;
 import com.twosigma.beakerx.jvm.object.ConfigurationFactory;
 import com.twosigma.beakerx.jvm.object.SimpleEvaluationObject;
@@ -76,6 +75,8 @@ import static java.util.Collections.singletonList;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -95,7 +96,7 @@ public class BeakerXKernelInterpreter extends AbstractInterpreter {
   private static final Logger LOGGER = LoggerFactory.getLogger(BeakerXKernelInterpreter.class);
   
   public static  DefaultBeakerXJsonSerializer serializer = new DefaultBeakerXJsonSerializer();
-  protected BaseEvaluator evaluator;  
+  protected GroovyEvaluator evaluator;  
   protected ZeppelinContext z;
 
   private String kernel;
@@ -152,26 +153,14 @@ public class BeakerXKernelInterpreter extends AbstractInterpreter {
       NamespaceClient namespaceClient = new NamespaceClient(AutotranslationServiceImpl.createAsMainKernel(id), serializer, beakerXCommRepository);
       //NamespaceClient namespaceClient = NamespaceClient.create(id, configurationFile, beakerXCommRepository);
       MagicCommandConfiguration magicCommandTypesFactory = new MagicCommandConfigurationImpl();
-      if(kernel.equalsIgnoreCase("groovy")){
-	      GroovyEvaluator groovyEvaluator = new GroovyEvaluator(id,
-	              id,
-	              getEvaluatorParameters(),
-	              namespaceClient,
-	              magicCommandTypesFactory.patterns(),
-	              new ClasspathScannerImpl());
-	      
-	      this.evaluator = groovyEvaluator;  
-      }
-      else {
-    	  JavaEvaluator groovyEvaluator = new JavaEvaluator(id,
-	              id,
-	              getEvaluatorParameters(),
-	              namespaceClient,
-	              magicCommandTypesFactory.patterns(),
-	              new ClasspathScannerImpl());
-	      
-	      this.evaluator = groovyEvaluator;  
-      }
+      GroovyEvaluator groovyEvaluator = new GroovyEvaluator(id,
+              id,
+              getEvaluatorParameters(),
+              namespaceClient,
+              magicCommandTypesFactory.patterns(),
+              new ClasspathScannerImpl());
+      
+      this.evaluator = groovyEvaluator;  
       
       Message message = new Message(new Header(EXECUTE_REQUEST, id));
       
@@ -229,6 +218,16 @@ public class BeakerXKernelInterpreter extends AbstractInterpreter {
     try {
       SimpleEvaluationObject seo = new SimpleEvaluationObject(st, configurationFactoryImpl);
       ExecutionOptions executionOptions  = new ExecutionOptions(GroupName.of(context.getParagraphId()));
+      
+      Map<String, Object> bindings = evaluator.getScriptBinding().getVariables();
+      bindings.clear();
+      StringWriter out = new StringWriter((int) (st.length() * 1.75));
+     
+      //put predefined bindings
+      bindings.put("g", new GObject(LOGGER, out, this.getProperties(), context, bindings));
+      bindings.put("out", new PrintWriter(out, true));
+
+      
       TryResult result = evaluator.evaluate(seo, st, executionOptions);
      
       interpreterOutput.getInterpreterOutput().flush();
@@ -238,10 +237,12 @@ public class BeakerXKernelInterpreter extends AbstractInterpreter {
                 InterpreterResult.Code.ERROR,result.error());
       } else {
        if(result.result() instanceof String) {
-    	   return new InterpreterResult(InterpreterResult.Code.SUCCESS,result.result().toString());
+    	   InterpreterResult runResult = new InterpreterResult(InterpreterResult.Code.SUCCESS,out.toString());
+    	   runResult.add(result.result().toString());
+    	   return runResult;
        }
        else {
-           return new InterpreterResult(InterpreterResult.Code.SUCCESS,result.result().toString());
+           return new InterpreterResult(InterpreterResult.Code.SUCCESS,out.toString());
        }
       }
     } catch (Exception e) {

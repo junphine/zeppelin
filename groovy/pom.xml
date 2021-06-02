@@ -70,29 +70,20 @@
         <artifactId>groovy-templates</artifactId>
         <version>3.0.7</version>
         <scope>provided</scope>
-    </dependency>
-    
+    </dependency>    
     
     
     <!-- add@byron -->
     <dependency>
       <groupId>com.twosigma</groupId>
       <artifactId>beaker-kernel-groovy</artifactId>
-      <version>2.0-SNAPSHOT</version>      
-      <scope>provided</scope>
+      <version>2.0-SNAPSHOT</version> 
       <exclusions>
         <exclusion>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    
-    <dependency>
-      <groupId>com.twosigma</groupId>
-      <artifactId>beaker-kernel-java</artifactId>
-      <version>2.0-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
     
      <dependency>

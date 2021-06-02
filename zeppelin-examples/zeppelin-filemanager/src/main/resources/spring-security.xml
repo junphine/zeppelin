@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+    <!--Disable static path check to reduce processing time. 不過濾特定路徑以節省時間-->
+    <http pattern="/bower_components/**" security="none"/>
+    <http pattern="/dist/**" security="none"/>
+    <http pattern="/webjars/**" security="none"/>
+    <http pattern="/static/**" security="none"/>
+    <http pattern="/view/**" security="none"/>   
+    <http pattern="/favicon.ico" security="none"/>
+    
+    <http use-expressions="true"  disable-url-rewriting="true"  create-session="always" auto-config="false">
+        <intercept-url pattern="/login" access="permitAll" requires-channel="any"/>
+        <intercept-url pattern="/logout" access="permitAll" requires-channel="any"/>
+        <intercept-url pattern="/filemanager/**" access="hasRole('ROLE_MEMBER')" requires-channel="any"/>
+        <intercept-url pattern="/" access="hasRole('ROLE_MEMBER')" requires-channel="any"/>
+        <csrf disabled="true"/>
+        <headers>
+            <cache-control/>
+            <content-type-options disabled="true"/>
+            <frame-options disabled="true"/>
+            <hsts disabled="true"/>
+            <xss-protection/>
+        </headers>
+        <form-login/>
+        <http-basic />
+        <logout />
+        <session-management session-fixation-protection="migrateSession"/>
+        <csrf disabled="true"/>
+        <headers>
+            <cache-control/>
+            <content-type-options/>
+            <frame-options/>
+            <hsts disabled="true"/>
+            <xss-protection/>
+        </headers>
+    </http>
+    
+    
+    
+    <!--  
+    <authentication-manager alias="authenticationManager">
+       
+        <authentication-provider>
+            <password-encoder hash="bcrypt" />
+            <user-service>
+                <user name="user" password="user" authorities="ROLE_USER" />
+                <user name="john" password="smith" authorities="ROLE_USER" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+    -->
+    <authentication-manager alias="authenticationManager">
+	    <ldap-authentication-provider server-ref="myLdap"
+	      user-search-base="ou=Users"
+	      user-search-filter="(cn={0})"
+	      group-search-base="ou=groups"
+	      group-role-attribute="cn"
+	      group-search-filter="(member={0})"
+	      role-prefix="ROLE_"
+	      >
+	    </ldap-authentication-provider>
+	</authentication-manager>
+	    
+	<ldap-server id="myLdap"  
+		 port="10389"  
+		 url="ldap://127.0.0.1:10389/OU=ldaptest,DC=drem,DC=io"   
+		
+     />  
+</beans:beans>

@@ -110,14 +110,21 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.webapp.Configuration;
+import org.eclipse.jetty.webapp.MetaInfConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.webapp.WebInfConfiguration;
+import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+
 import org.glassfish.hk2.api.Immediate;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
@@ -226,13 +233,40 @@ public class ZeppelinServer extends ResourceConfig {
     // Multiple Web UI
     final WebAppContext defaultWebApp = setupWebAppContext(contexts, conf, conf.getString(ConfVars.ZEPPELIN_WAR), conf.getServerContextPath());
     final WebAppContext nextWebApp = setupWebAppContext(contexts, conf, conf.getString(ConfVars.ZEPPELIN_ANGULAR_WAR), WEB_APP_CONTEXT_NEXT);
-    // add@byron Vue Plugin Web
-    String vuePluginPath = conf.getString(ConfVars.ZEPPELIN_PLUGINS_DIR)+"/web-plugin";
-    final WebAppContext pluginWebApp = setupWebAppContext(contexts, conf, vuePluginPath, "/web-plugin");
-
+   
     initWebApp(defaultWebApp);
     initWebApp(nextWebApp);    
-    initWebApp(pluginWebApp);
+    
+   
+    
+    // add@byron Zeppelin Plugin Web
+    // Enable annotation processing so that Spring Boot does its magic   
+    File webPlugins = new File("web-plugins");
+    for(File plugin: webPlugins.listFiles()) {
+	    String warPath = plugin.getPath();
+	    int pos = plugin.getName().indexOf('.');
+	    String contextPath =  pos>0? plugin.getName().substring(0,pos): plugin.getName();
+	    WebAppContext webApp = setupWebAppContext(contexts,conf,warPath,"/"+contextPath);	   
+	    webApp.setConfigurations(new Configuration[] {
+	    		new MetaInfConfiguration(),
+	    		new WebInfConfiguration(),
+	    		new WebXmlConfiguration(), 
+	    		/**
+	    		new AnnotationConfiguration() {
+	                @Override
+	                public void preConfigure(WebAppContext context) {
+	                    ClassInheritanceMap map = new ClassInheritanceMap();
+	                    map.put("org.springframework.web.WebApplicationInitializer", new ConcurrentHashSet<String>() {{
+	                        add("org.springframework.boot.web.servlet.support.SpringBootServletInitializer"); 
+	                    }});
+	                    context.setAttribute(CLASS_INHERITANCE_MAP, map);
+	                    _classInheritanceHandler = new ClassInheritanceHandler(map);
+	                }
+	            } 
+	            */
+	            });	    
+    }
+    // end@
     
     // Cluster Manager Server
     setupClusterManagerServer(sharedServiceLocator);

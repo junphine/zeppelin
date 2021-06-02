@@ -24,7 +24,7 @@
 
     <button type="button"
             class="btn btn-default btn-sm"
-            ng-repeat="app in apps"
+            ng-repeat="app in apps"       
             ng-click="switchApp(app.id)"
             ng-class="{'active' : app.id == config.helium.activeApp}"
             ng-bind-html="app.pkg.icon">

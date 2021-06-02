@@ -49,6 +49,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.5</version>
         <configuration>
           <warSourceDirectory>dist</warSourceDirectory>
           <webXml>dist\WEB-INF\web.xml</webXml>

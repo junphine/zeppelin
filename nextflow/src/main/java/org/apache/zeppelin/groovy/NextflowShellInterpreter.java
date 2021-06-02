@@ -110,7 +110,7 @@ public class NextflowShellInterpreter extends KerberosInterpreter {
     CommandLine cmdLine = CommandLine.parse(shell);
     
     Launcher launcher = new Launcher();
-    launcher.getOptions().setLogFile("../logs/nextflow-shell.log");
+    launcher.getOptions().setLogFile("logs/nextflow-shell.log");
 
     String optionsString = context.getStringLocalProperty("options", "");
     

@@ -101,7 +101,10 @@ public class NextflowInterpreter extends Interpreter {
     }
     if(options !=null && options.length()>0) {
       log.info("nextflow process options: " + options);
-    }    
+    }  
+    
+    File scriptFiles = new File("/tmp/nextflow");
+    scriptFiles.mkdir();
     
   }
 
@@ -162,12 +165,12 @@ public class NextflowInterpreter extends Interpreter {
       
 	
     try {
-      File scriptFile = new File("/tmp/",pipeName+".nf");
+      File scriptFile = new File("/tmp/nextflow",contextInterpreter.getParagraphId()+".nf");
       FileWriter writer = new FileWriter(scriptFile);
       writer.write(cmd);
       writer.close();
       
-      String nextFlowCmd = "run "+ scriptFile.getPath() + " -lib ../interpreter/nextflow ";
+      String nextFlowCmd = "run "+ scriptFile.getPath() + " -lib interpreter/nextflow ";
       String optionsString = contextInterpreter.getStringLocalProperty("options", "");
       if(this.options!=null && !this.options.isEmpty()) {
     	  nextFlowCmd +=  " " + options;
@@ -181,7 +184,7 @@ public class NextflowInterpreter extends Interpreter {
       args.addAll(Arrays.asList(strArgs).subList(2, strArgs.length));
       
       Launcher launcher = new Launcher(true);     
-      launcher.getOptions().setLogFile("../logs/nextflow.log");
+      launcher.getOptions().setLogFile("logs/nextflow.log");
       launcher.command(strArgs);
       
       
@@ -205,7 +208,7 @@ public class NextflowInterpreter extends Interpreter {
       if (profile != null && profile.length() > 0) {
           log.info("nextflow process profile: " + profile);
           cmdRun.setProfile(profile);
-        }
+      }
       
       ScriptRunner runner = cmdRun.runJob(scriptFile.getPath(),args);      
       
@@ -225,7 +228,7 @@ public class NextflowInterpreter extends Interpreter {
       }
       //put predefined bindings
       bindings.setVariable("g", new GObject(log, out, this.getProperties(), contextInterpreter, sharedBindings));
-      bindings.setVariable("zout", new PrintWriter(out, true));
+      bindings.setVariable("out", new PrintWriter(out, true));
 
       
 	  // -- run it!
@@ -236,7 +239,7 @@ public class NextflowInterpreter extends Interpreter {
           if (log.isTraceEnabled()) {
             log.trace("groovy script variable " + e);  //let's see what we have...
           }
-          //sharedBindings.put(e.getKey(), e.getValue());
+          sharedBindings.put(e.getKey(), e.getValue());
         }
       }
       
