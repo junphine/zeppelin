@@ -63,7 +63,11 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
     //add@byron
     this.z.setGui(ctx.getGui());
   }
-
+  
+  public GroovyZeppelinContext getZeppelinContext() {
+	return z;
+  }
+  
   public Object getProperty(String key) {
     if ("log".equals(key)) {
       return log;
@@ -287,21 +291,6 @@ public class GObject extends groovy.lang.GroovyObjectSupport {
    
   }
 
-  private AngularObject getAngularObject(String name) {
-    AngularObjectRegistry registry = interpreterContext.getAngularObjectRegistry();
-    String noteId = interpreterContext.getNoteId();
-    // try get local object
-    AngularObject paragraphAo = registry.get(name, noteId, interpreterContext.getParagraphId());
-    AngularObject noteAo = registry.get(name, noteId, null);
-
-    AngularObject ao = paragraphAo != null ? paragraphAo : noteAo;
-
-    if (ao == null) {
-      // then global object
-      ao = registry.get(name, null, null);
-    }
-    return ao;
-  }
 
   /**
    * Get angular object. Look up notebook scope first and then global scope

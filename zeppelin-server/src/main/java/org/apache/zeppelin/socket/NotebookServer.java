@@ -458,6 +458,17 @@ public class NotebookServer extends WebSocketServlet
         case PATCH_PARAGRAPH:
           patchParagraph(conn, messagereceived);
           break;
+        case BROADCAST: //add@byron
+          String topic = (String)messagereceived.get("topic");
+          if(topic!=null) {
+        	 // register
+             getConnectionManager().addNoteConnection(topic, conn);
+             getConnectionManager().broadcastExcept(topic, messagereceived,conn);
+          }
+          else {
+             getConnectionManager().broadcastToAllConnectionsExcept(conn,msg);
+          }
+          break;
         default:
           break;
       }

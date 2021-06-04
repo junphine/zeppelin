@@ -431,7 +431,7 @@ public class AngularFileManagerServlet extends HttpServlet {
                 SimpleDateFormat dt = new SimpleDateFormat(DATE_FORMAT);
                 // Calendar cal = Calendar.getInstance();
                 for (Path pathObj : directoryStream) {
-                	if(pathObj.startsWith(".")) {
+                	if(pathObj.getFileName().toString().startsWith(".")) {
                 		continue;
                 	}
                     BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);

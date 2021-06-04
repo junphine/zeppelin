@@ -18,6 +18,8 @@
 package org.apache.zeppelin.groovy;
 
 import org.apache.zeppelin.interpreter.ZeppelinContext;
+import org.apache.zeppelin.display.AngularObject;
+import org.apache.zeppelin.display.AngularObjectRegistry;
 import org.apache.zeppelin.interpreter.InterpreterHookRegistry;
 
 import java.util.List;
@@ -45,5 +47,22 @@ public class GroovyZeppelinContext extends ZeppelinContext {
   @Override
   public String showData(Object obj, int maxResult) {
     return null;
+  }
+  
+
+  public AngularObject getAngularObject(String name) {
+    AngularObjectRegistry registry = interpreterContext.getAngularObjectRegistry();
+    String noteId = interpreterContext.getNoteId();
+    // try get local object
+    AngularObject paragraphAo = registry.get(name, noteId, interpreterContext.getParagraphId());
+    AngularObject noteAo = registry.get(name, noteId, null);
+
+    AngularObject ao = paragraphAo != null ? paragraphAo : noteAo;
+
+    if (ao == null) {
+      // then global object
+      ao = registry.get(name, null, null);
+    }
+    return ao;
   }
 }

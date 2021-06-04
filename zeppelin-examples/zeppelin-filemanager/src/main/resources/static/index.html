@@ -38,20 +38,28 @@
                 extractUrl: 'filemanager/extract/',
                 documentViewUrl: 'office/',
                 pickCallback: function (item) {
+				    if(item.type!='file')
+					   return ;
                     
-					if(item.type=='file' && item.name.endsWith('.zpln') ){
+					if(item.name.endsWith('.zpln') ){
 					  var pos = item.name.lastIndexOf('_');
 					  var paphid = item.name.substring(pos+1,item.name.length-5);
 					  window.location='/#/notebook/'+paphid;
 					  return ;
 					}
-					else if(item.type=='file' && item.name.endsWith('.ipynb') ){
-					 var msg = 'Use %s "filemanager/view%s" as url for import external jupiter nodebook to zeppelin'
+					else if(item.name.endsWith('.ipynb') ){
+					  var msg = 'Use %s "filemanager/view%s" as url for import external jupiter nodebook to zeppelin'
                             .replace('%s', item.type)
                             .replace('%s', item.fullPath());
 					  window.alert(msg);
 					  return false;
 					}
+					else if(item.name.endsWith('.sheet') || item.name.endsWith('.csv') || item.name.endsWith('.tsv') ){
+					  window.location='/spreadsheet/?ref=/filemanager/view'+item.fullPath();
+					  return false;
+					}
+					
+					
 					var msg = 'Picked %s "filemanager/view%s" for external use'
                             .replace('%s', item.type)
                             .replace('%s', item.fullPath());

@@ -264,7 +264,9 @@ public class ZeppelinServer extends ResourceConfig {
 	                }
 	            } 
 	            */
-	            });	    
+	            });	 
+	    // add ws
+	    setupNotebookServer(webApp, conf, sharedServiceLocator);
     }
     // end@
     
